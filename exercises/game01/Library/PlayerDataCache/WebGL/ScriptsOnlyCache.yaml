@@ -674,4 +674,4 @@ ScriptsOnlyBuild:
   - Assets/Scenes/Menu Scene.unity
   - Assets/Scenes/1 Player.unity
   - Assets/Scenes/2 Player.unity
-  playerPath: C:/Users/Nils Schofer/Desktop/Game Programming Class/game01/web
+  playerPath: C:/Users/Nils Schofer/Documents/GitHub/csc470-fall2019/exercises/game01/web
