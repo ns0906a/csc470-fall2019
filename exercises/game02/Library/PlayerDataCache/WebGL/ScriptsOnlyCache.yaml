@@ -6,7 +6,6 @@ ScriptsOnlyBuild:
     - PlayerController
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
-    - UnityEditor.TestTools.TestRunner.TestListCacheData
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
     - UnityEngine.EventSystems.StandaloneInputModule
@@ -540,5 +539,4 @@ ScriptsOnlyBuild:
   platform: 20
   scenePathNames:
   - Assets/Scenes/Computer Game.unity
-  playerPath: C:/Users/Nils Schofer/Desktop/Sorting/Current School Stuff/Game Programming
-    Class/game02/web
+  playerPath: C:/Users/Nils Schofer/Documents/GitHub/csc470-fall2019/exercises/game02/web
