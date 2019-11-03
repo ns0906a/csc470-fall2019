@@ -44,6 +44,9 @@ public class GameManager : MonoBehaviour
     string ActionName;
     Vector3 mouseSet;
 
+    public string[] nameDatabase;
+    public GameObject[] personalities;
+
 
 
 
@@ -249,6 +252,7 @@ public class GameManager : MonoBehaviour
                                 {
                                     if (selectedUnit != null)
                                     {
+                                        selectedUnit.aud.PlayOneShot(selectedUnit.pers.getClip("move"));
                                         selectedUnit.doneTurn = true;
                                         updateUI();
                                         selectedUnit.action = 1;
@@ -261,6 +265,7 @@ public class GameManager : MonoBehaviour
                                 {
                                     if (selectedUnit != null)
                                     {
+                                        selectedUnit.aud.PlayOneShot(selectedUnit.pers.getClip("attack"));
                                         selectedUnit.doneTurn = true;
                                         updateUI();
                                         selectedUnit.action = 2;
@@ -273,6 +278,7 @@ public class GameManager : MonoBehaviour
                                 {
                                     if (selectedUnit != null)
                                     {
+
                                         selectedUnit.doneTurn = true;
                                         updateUI();
                                         selectedUnit.action = selectedUnit.specialAction;

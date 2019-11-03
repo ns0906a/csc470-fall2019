@@ -27,7 +27,10 @@ public class UnitScript : MonoBehaviour
     public GameObject backRing;
     public GameObject basePlate;
 
-    string[] nameDatabase = { "Brain" };
+    public AudioSource aud;
+    public PersonalityScript pers;
+
+    
 
     Color defaultColor;
     public Color hoverColor;
@@ -54,7 +57,8 @@ public class UnitScript : MonoBehaviour
         defaultColor = re.material.color;
         GameObject gmObj = GameObject.Find("GameManager");
         gm = gmObj.GetComponent<GameManager>();
-
+        aud = GetComponent<AudioSource>();
+        
         cc = GetComponent<CharacterController>();
 
         destination = transform.position;
@@ -127,7 +131,7 @@ public class UnitScript : MonoBehaviour
                 playerColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                 ColorPlayer(playerColor);
                 tag = "Bot";
-                Name = nameDatabase[Random.Range(0, nameDatabase.Length-1)];
+                Name = gm.nameDatabase[Random.Range(0, gm.nameDatabase.Length-1)];
             }
 
             if (activated)
@@ -425,10 +429,8 @@ public class UnitScript : MonoBehaviour
                             if(target.GetComponent<UnitScript>().deactivated)
                             {
                                 target.GetComponent<UnitScript>().Health += Love;
-                                //target.GetComponent<UnitScript>().deactivated = false;
                                 action = 0;
                                 doneTurn = true;
-                                //ColorPlayer(playerColor);
                             } else
                             {
                                 action = 0;
@@ -481,6 +483,7 @@ public class UnitScript : MonoBehaviour
                 if (selected)
                 {
                     gm.selectUnit(this);
+                    aud.PlayOneShot(pers.getClip("select"));
                 }
                 else
                 {
