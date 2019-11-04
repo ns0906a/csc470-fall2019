@@ -1451,10 +1451,10 @@ MonoBehaviour:
   - NullReferenceException
   - Created by Nils Schofer
   - 'Bot Voices: Adrian King, Erik Schofer, Timothy Lundberg'
-  - 'Music/Sound: Made by using Beatbox'
+  - 'Music/Sound: Made using BeepBox'
   - 'Pictures/Spites: Made in Paint.net'
   - 'Fonts: Inconsalata (Open Font License)'
-  - Everything Else Made in Unity
+  - Everything else made in Unity
   - Thanks for Playing
   colors:
   - {r: 1, g: 1, b: 1, a: 1}

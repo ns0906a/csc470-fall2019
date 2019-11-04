@@ -3,6 +3,7 @@ ScriptsOnlyBuild:
     Assembly-CSharp.dll:
     - ButtonScript
     - CinematicScript
+    - EndTriggerScript
     - GameManager
     - LaserScript
     - MenuScript
@@ -17,7 +18,6 @@ ScriptsOnlyBuild:
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
-    - UnityEditor.TestTools.TestRunner.TestListCacheData
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
     - UnityEngine.EventSystems.EventTrigger
@@ -74,7 +74,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11048}
     - Class: 114
-      Script: {instanceID: 11402}
+      Script: {instanceID: 11404}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -133,7 +133,7 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11048}
     - Class: 114
-      Script: {instanceID: 11402}
+      Script: {instanceID: 11404}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -196,9 +196,9 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11048}
     - Class: 114
-      Script: {instanceID: 11370}
+      Script: {instanceID: 11372}
     - Class: 114
-      Script: {instanceID: 11402}
+      Script: {instanceID: 11404}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -232,9 +232,13 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 48
       Script: {instanceID: 0}
+    - Class: 54
+      Script: {instanceID: 0}
     - Class: 64
       Script: {instanceID: 0}
     - Class: 65
+      Script: {instanceID: 0}
+    - Class: 74
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
@@ -243,6 +247,10 @@ ScriptsOnlyBuild:
     - Class: 83
       Script: {instanceID: 0}
     - Class: 89
+      Script: {instanceID: 0}
+    - Class: 91
+      Script: {instanceID: 0}
+    - Class: 95
       Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
@@ -263,7 +271,11 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10588}
     - Class: 114
+      Script: {instanceID: 10632}
+    - Class: 114
       Script: {instanceID: 10676}
+    - Class: 114
+      Script: {instanceID: 10762}
     - Class: 114
       Script: {instanceID: 10802}
     - Class: 114
@@ -271,17 +283,19 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11102}
     - Class: 114
-      Script: {instanceID: 11342}
+      Script: {instanceID: 11292}
     - Class: 114
-      Script: {instanceID: 11402}
+      Script: {instanceID: 11344}
     - Class: 114
-      Script: {instanceID: 11416}
+      Script: {instanceID: 11372}
     - Class: 114
-      Script: {instanceID: 11450}
+      Script: {instanceID: 11404}
+    - Class: 114
+      Script: {instanceID: 11418}
     - Class: 114
       Script: {instanceID: 11452}
     - Class: 114
-      Script: {instanceID: 13948}
+      Script: {instanceID: 11454}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -393,7 +407,7 @@ ScriptsOnlyBuild:
     className: TestResultRendererCallback
   - hash:
       serializedVersion: 2
-      Hash: 5ad5f8509bd52abb8cff5bea061b3ea4
+      Hash: 2a1ba57bab78a49623b02a8dbff1c2c6
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: CinematicScript
@@ -657,7 +671,7 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
-      Hash: 2fd7a0259096615e30062bf503c1e74f
+      Hash: 052641788efc601e937aec83df4aac27
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PersonalityScript
@@ -673,6 +687,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
     className: TMP_StyleSheet
+  - hash:
+      serializedVersion: 2
+      Hash: 9bcb0a1a9a5ccb74a3bd62c5283f0fa5
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: EndTriggerScript
   - hash:
       serializedVersion: 2
       Hash: 5372ed2ce39229b1ac910757999a8be2
@@ -699,7 +719,7 @@ ScriptsOnlyBuild:
     className: BaseInput
   - hash:
       serializedVersion: 2
-      Hash: d06616a1ea598181932c02cd6ab3a088
+      Hash: 8ce9b71ccebdd18e08932a4f51ef2cfc
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -765,7 +785,7 @@ ScriptsOnlyBuild:
     className: ToggleGroup
   - hash:
       serializedVersion: 2
-      Hash: 28db654387ca0d88e924d874bb7784f1
+      Hash: be19b47f178d8968e5eca62df7999a66
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UnitScript
