@@ -10972,22 +10972,22 @@ PrefabInstance:
     - target: {fileID: 5293750734228652408, guid: 3efed502918f9b0439155a52f52d3e53,
         type: 3}
       propertyPath: Health
-      value: 600
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5293750734228652408, guid: 3efed502918f9b0439155a52f52d3e53,
         type: 3}
       propertyPath: Attack
-      value: 400
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5293750734228652408, guid: 3efed502918f9b0439155a52f52d3e53,
         type: 3}
       propertyPath: Love
-      value: 300
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5293750734228652408, guid: 3efed502918f9b0439155a52f52d3e53,
         type: 3}
       propertyPath: MovementSpeed
-      value: 500
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5293750734228652408, guid: 3efed502918f9b0439155a52f52d3e53,
         type: 3}
