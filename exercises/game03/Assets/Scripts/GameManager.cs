@@ -8,6 +8,9 @@ public class GameManager : MonoBehaviour
 {
     UnitScript selectedUnit;
 
+    public bool paused = false;
+    public GameObject winLoose;
+
     //UI
     public GameObject bot;
     public GameObject selectedPanel;
@@ -23,8 +26,17 @@ public class GameManager : MonoBehaviour
     public Text turnText;
     public GameObject deactivated;
     public Button endTurnButton;
+    public GameObject pauseMenu;
 
-    public GameObject talkBox;
+    public GameObject sentienceBar;
+    public GameObject healthBar;
+    
+
+    int botNum = 0;
+
+    public Image turnTracker;
+
+    public GameObject bars;
 
     GameObject camTarg;
     public Text talkText;
@@ -33,7 +45,7 @@ public class GameManager : MonoBehaviour
     public bool playerTurn;
     float camSpeed = 15;
     float scrollSpeed = 25;
-    float screenScrollSpeed = 0.5f;
+    float screenScrollSpeed = 15;
     float zoomSpeed = 200;
     bool viable = false;
     bool doAI = false;
@@ -45,7 +57,9 @@ public class GameManager : MonoBehaviour
     Vector3 mouseSet;
 
     public string[] nameDatabase;
-    public GameObject[] personalities;
+    public PersonalityScript[] personalities;
+
+    public AudioSource aud;
 
 
 
@@ -53,6 +67,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        aud = GetComponent<AudioSource>();
+        paused = false;
         line = selector.GetComponent<LineRenderer>();
         camTarg = GameObject.Find("CameraTarget");
         mouseSet = Input.mousePosition;
@@ -63,161 +79,167 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && actionsDone())
+        if(!paused)
         {
-            endTurn();
-        }
-
-        if (!NullTeamAlive())
-        {
-            Debug.Log("You Lose");
-        }
-
-        if (actionsDone() && playerTurn)
-        {
-            endTurnButton.interactable = true;
-        }
-        else
-        {
-            endTurnButton.interactable = false;
-        }
-
-        if (!playerTurn)
-        {
-            if (doAI)
-            {
-                foreach (GameObject bot in GameObject.FindGameObjectsWithTag("Enemy"))
-                {
-                    bot.GetComponent<UnitScript>().activated = true;
-                }
-                doAI = false;
-            }
-            if(aiTurnDone())
+            if (Input.GetKeyDown(KeyCode.Space) && actionsDone() && playerTurn)
             {
                 endTurn();
             }
-        }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
+            if (!NullTeamAlive())
+            {
+                Debug.Log("You Lose");
+                paused = true;
+                winLoose.SetActive(true);
+            }
+
+            if (actionsDone() && playerTurn)
+            {
+                endTurnButton.interactable = true;
+            }
+            else
+            {
+                endTurnButton.interactable = false;
+            }
+
+            if (!playerTurn)
+            {
+                if (doAI)
+                {
+                    foreach (GameObject bot in GameObject.FindGameObjectsWithTag("Enemy"))
+                    {
+                        bot.GetComponent<UnitScript>().activated = true;
+                        bot.GetComponent<UnitScript>().doneTurn = false;
+                        botNum = 0;
+                    }
+                    doAI = false;
+                }
+                if (aiTurnDone())
+                {
+                    endTurn();
+                }
+            }
+
+            cameraControls();
             if (selectedUnit != null)
             {
-                selectUnit(null);
-            }
-        }
-
-        cameraControls();
-        if (selectedUnit != null)
-        {
-            IEnumerable<Toggle> activeToggles = actionSelectToggleGroup.ActiveToggles();
-            ActionName = "-";
-            foreach (Toggle t in activeToggles)
-            {
-                ActionName = t.name;
-            }
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (!ActionName.Equals("-"))
-            {
-                if (ActionName.Equals("Move"))
+                IEnumerable<Toggle> activeToggles = actionSelectToggleGroup.ActiveToggles();
+                ActionName = "-";
+                foreach (Toggle t in activeToggles)
                 {
-                    descTitle.text = "Move";
-                    desc.text = "Take a turn to move Bot to a new position. How far a Bot can move depends on their Speed.";
+                    ActionName = t.name;
                 }
-                if (ActionName.Equals("Hostile"))
-                {
-                    descTitle.text = "Shoot a Laser";
-                    desc.text = "Take a turn to fire a laser. Laser deals damage to robot they take damage based on your Robot's Attack.";
-                }
-                if (ActionName.Equals("Non-Hostile"))
-                {
-                    descTitle.text = selectedUnit.getNonHost(1);
-                    desc.text = selectedUnit.getNonHost(0);
-                }
-                if (ActionName.Equals("-"))
-                {
-
-                }
-                if (!selector.activeSelf)
-                {
-                    selector.SetActive(true);
-                }
-                if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("ground")))
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+                if (!ActionName.Equals("-"))
                 {
                     if (ActionName.Equals("Move"))
                     {
-                        Vector3 selPos = hit.point;
-                        selPos.y = 0.1f;
-                        float dist = Vector3.Distance(selPos, selectedUnit.transform.position);
-                        Color col;
-                        if (dist > selectedUnit.MovementSpeed * 3 || selector.GetComponent<SelectorScript>().hasTarget)
-                        {
-                            viable = false;
-                            col = Color.red;
-                            col.a = 0.5f;
-                        }
-                        else
-                        {
-                            viable = true;
-                            col = Color.green;
-                            col.a = 0.5f;
-                        }
-                        selector.GetComponent<SpriteRenderer>().color = col;
-                        line.material.color = col;
-                        line.material.color = col;
-                        selector.transform.position = selPos;
-                        line.SetPosition(0, selectedUnit.transform.position);
-                        line.SetPosition(1, selector.transform.position);
+                        descTitle.text = "Move";
+                        desc.text = "Take a turn to move Bot to a new position. How far a Bot can move depends on their Speed.";
                     }
                     if (ActionName.Equals("Hostile"))
                     {
-                        Vector3 selPos = hit.point;
-                        selPos.y = 0.1f;
-                        float dist = Vector3.Distance(selPos, selectedUnit.transform.position);
-                        Color col;
-                        if (dist > selectedUnit.MovementSpeed * 3)
-                        {
-                            viable = false;
-                            col = Color.red;
-                            col.a = 0.5f;
-                        }
-                        else
-                        {
-                            viable = true;
-                            col = Color.white;
-                            col.a = 0.5f;
-                        }
-                        selector.GetComponent<SpriteRenderer>().color = col;
-                        line.material.color = col;
-                        line.material.color = col;
-                        selector.transform.position = selPos;
-                        line.SetPosition(0, selectedUnit.transform.position);
-                        line.SetPosition(1, selector.transform.position);
+                        descTitle.text = "Shoot a Laser";
+                        desc.text = "Take a turn to fire a laser. Laser deals damage to robot they take damage based on your Robot's Attack.";
                     }
                     if (ActionName.Equals("Non-Hostile"))
                     {
-                        Vector3 selPos = hit.point;
-                        selPos.y = 0.1f;
-                        float dist = Vector3.Distance(selPos, selectedUnit.transform.position);
-                        Color col;
-                        if (dist > selectedUnit.MovementSpeed * 3 || !selector.GetComponent<SelectorScript>().hasTarget || (selector.GetComponent<SelectorScript>().target.GetComponent<UnitScript>().deactivated && selectedUnit.specialAction != 6) || selector.GetComponent<SelectorScript>().target == selectedUnit)
+                        descTitle.text = selectedUnit.getNonHost(1);
+                        desc.text = selectedUnit.getNonHost(0);
+                    }
+                    if (ActionName.Equals("-"))
+                    {
+
+                    }
+                    if (!selector.activeSelf)
+                    {
+                        selector.SetActive(true);
+                    }
+                    if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("ground")))
+                    {
+                        if (ActionName.Equals("Move"))
                         {
-                            viable = false;
-                            col = Color.red;
-                            col.a = 0.5f;
+                            Vector3 selPos = hit.point;
+                            selPos.y = 0.1f;
+                            float dist = Vector3.Distance(selPos, selectedUnit.transform.position);
+                            Color col;
+                            if (dist > selectedUnit.MovementSpeed * 3 || selector.GetComponent<SelectorScript>().hasTarget)
+                            {
+                                viable = false;
+                                col = Color.red;
+                                col.a = 0.5f;
+                            }
+                            else
+                            {
+                                viable = true;
+                                col = Color.green;
+                                col.a = 0.5f;
+                            }
+                            selector.GetComponent<SpriteRenderer>().color = col;
+                            line.material.color = col;
+                            line.material.color = col;
+                            selector.transform.position = selPos;
+                            line.SetPosition(0, selectedUnit.transform.position);
+                            line.SetPosition(1, selector.transform.position);
                         }
-                        else
+                        if (ActionName.Equals("Hostile"))
                         {
-                            viable = true;
-                            col = selectedUnit.playerColor;
-                            col.a = 0.5f;
+                            Vector3 selPos = hit.point;
+                            selPos.y = 0.1f;
+                            float dist = Vector3.Distance(selPos, selectedUnit.transform.position);
+                            Color col;
+                            if (dist > selectedUnit.MovementSpeed * 3)
+                            {
+                                viable = false;
+                                col = Color.red;
+                                col.a = 0.5f;
+                            }
+                            else
+                            {
+                                viable = true;
+                                col = Color.white;
+                                col.a = 0.5f;
+                            }
+                            selector.GetComponent<SpriteRenderer>().color = col;
+                            line.material.color = col;
+                            line.material.color = col;
+                            selector.transform.position = selPos;
+                            line.SetPosition(0, selectedUnit.transform.position);
+                            line.SetPosition(1, selector.transform.position);
                         }
-                        selector.GetComponent<SpriteRenderer>().color = col;
-                        line.material.color = col;
-                        line.material.color = col;
-                        selector.transform.position = selPos;
-                        line.SetPosition(0, selectedUnit.transform.position);
-                        line.SetPosition(1, selector.transform.position);
+                        if (ActionName.Equals("Non-Hostile"))
+                        {
+                            Vector3 selPos = hit.point;
+                            selPos.y = 0.1f;
+                            float dist = Vector3.Distance(selPos, selectedUnit.transform.position);
+                            Color col;
+                            if (dist > selectedUnit.MovementSpeed * 3 || !selector.GetComponent<SelectorScript>().hasTarget || (selector.GetComponent<SelectorScript>().target.GetComponent<UnitScript>().deactivated && selectedUnit.specialAction != 6) || selector.GetComponent<SelectorScript>().target == selectedUnit)
+                            {
+                                viable = false;
+                                col = Color.red;
+                                col.a = 0.5f;
+                            }
+                            else
+                            {
+                                viable = true;
+                                col = selectedUnit.playerColor;
+                                col.a = 0.5f;
+                            }
+                            selector.GetComponent<SpriteRenderer>().color = col;
+                            line.material.color = col;
+                            line.material.color = col;
+                            selector.transform.position = selPos;
+                            line.SetPosition(0, selectedUnit.transform.position);
+                            line.SetPosition(1, selector.transform.position);
+                        }
+                    }
+                    else
+                    {
+                        if (selector.activeSelf)
+                        {
+                            selector.SetActive(false);
+                        }
                     }
                 }
                 else
@@ -226,68 +248,77 @@ public class GameManager : MonoBehaviour
                     {
                         selector.SetActive(false);
                     }
+                    descTitle.text = "Action Description";
+                    desc.text = "Select an action from the list on the right for your bot to perform. What the action does will be listed here.";
                 }
-            }
-            else
-            {
-                if (selector.activeSelf)
-                {
-                    selector.SetActive(false);
-                }
-                descTitle.text = "Action Description";
-                desc.text = "Select an action from the list on the right for your bot to perform. What the action does will be listed here.";
-            }
 
-            if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
-            {
-                if (ActionSelect())
+                if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
                 {
-                    if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("ground")))
+                    if (ActionSelect())
                     {
-                        if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ground"))
+                        if (Physics.Raycast(ray, out hit, Mathf.Infinity, 1 << LayerMask.NameToLayer("ground")))
                         {
-                            if (viable)
+                            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ground"))
                             {
-                                if (ActionName.Equals("Move"))
+                                if (viable)
                                 {
-                                    if (selectedUnit != null)
+                                    if (ActionName.Equals("Move"))
                                     {
-                                        selectedUnit.aud.PlayOneShot(selectedUnit.pers.getClip("move"));
-                                        selectedUnit.doneTurn = true;
-                                        updateUI();
-                                        selectedUnit.action = 1;
-                                        selectedUnit.destination = hit.point;
+                                        if (selectedUnit != null)
+                                        {
+                                            selectedUnit.aud.PlayOneShot(selectedUnit.pers.getClip("move"));
+                                            selectedUnit.doneTurn = true;
+                                            updateUI();
+                                            selectedUnit.action = 1;
+                                            selectedUnit.destination = hit.point;
 
+                                        }
+                                    }
+
+                                    if (ActionName.Equals("Hostile"))
+                                    {
+                                        if (selectedUnit != null)
+                                        {
+                                            selectedUnit.aud.PlayOneShot(selectedUnit.pers.getClip("attack"));
+                                            selectedUnit.doneTurn = true;
+                                            updateUI();
+                                            selectedUnit.action = 2;
+                                            selectedUnit.destination = hit.point;
+
+                                        }
+                                    }
+
+                                    if (ActionName.Equals("Non-Hostile"))
+                                    {
+                                        if (selectedUnit != null)
+                                        {
+
+                                            selectedUnit.doneTurn = true;
+                                            updateUI();
+                                            selectedUnit.action = selectedUnit.specialAction;
+                                            selectedUnit.destination = hit.point;
+                                            selectedUnit.target = selector.GetComponent<SelectorScript>().target;
+                                        }
                                     }
                                 }
-
-                                if (ActionName.Equals("Hostile"))
+                                if (ActionName.Equals("-"))
                                 {
                                     if (selectedUnit != null)
                                     {
-                                        selectedUnit.aud.PlayOneShot(selectedUnit.pers.getClip("attack"));
-                                        selectedUnit.doneTurn = true;
+                                        selectedUnit.selected = false;
+                                        selectedUnit.SetCorrectColor();
+                                        selectedUnit = null;
                                         updateUI();
-                                        selectedUnit.action = 2;
-                                        selectedUnit.destination = hit.point;
-
-                                    }
-                                }
-
-                                if (ActionName.Equals("Non-Hostile"))
-                                {
-                                    if (selectedUnit != null)
-                                    {
-
-                                        selectedUnit.doneTurn = true;
-                                        updateUI();
-                                        selectedUnit.action = selectedUnit.specialAction;
-                                        selectedUnit.destination = hit.point;
-                                        selectedUnit.target = selector.GetComponent<SelectorScript>().target;
                                     }
                                 }
                             }
-                            if (ActionName.Equals("-"))
+                        }
+                    }
+                    else
+                    {
+                        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                        {
+                            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ground"))
                             {
                                 if (selectedUnit != null)
                                 {
@@ -298,13 +329,7 @@ public class GameManager : MonoBehaviour
                                 }
                             }
                         }
-                    }
-                }
-                else
-                {
-                    if (Physics.Raycast(ray, out hit, Mathf.Infinity))
-                    {
-                        if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ground"))
+                        else
                         {
                             if (selectedUnit != null)
                             {
@@ -315,50 +340,69 @@ public class GameManager : MonoBehaviour
                             }
                         }
                     }
-                    else
-                    {
-                        if (selectedUnit != null)
-                        {
-                            selectedUnit.selected = false;
-                            selectedUnit.SetCorrectColor();
-                            selectedUnit = null;
-                            updateUI();
-                        }
-                    }
-                }
-                foreach (Toggle t in activeToggles)
-                {
-                    t.isOn = false;
-                }
-            }
-            else if (Input.GetMouseButtonDown(0))
-            {
-                bool selectIsOn = false;
-                foreach (Toggle t in activeToggles)
-                {
-                    selectIsOn = t.isOn;
-                }
-                if (selectIsOn)
-                {
                     foreach (Toggle t in activeToggles)
                     {
                         t.isOn = false;
                     }
                 }
+                else if (Input.GetMouseButtonDown(0))
+                {
+                    bool selectIsOn = false;
+                    foreach (Toggle t in activeToggles)
+                    {
+                        selectIsOn = t.isOn;
+                    }
+                    if (selectIsOn)
+                    {
+                        foreach (Toggle t in activeToggles)
+                        {
+                            t.isOn = false;
+                        }
+                    }
+                }
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+    }
+
+    public GameObject closestObject(Transform self, string tag)
+    {
+        GameObject tar = null;
+        float previousDist = Mathf.Infinity;
+        float dist = 0;
+        foreach (GameObject bot in GameObject.FindGameObjectsWithTag(tag))
+        {
+            if (!bot.GetComponent<UnitScript>().deactivated)
+            {
+                dist = Vector3.Distance(self.position, bot.transform.position);
+                if (dist < previousDist)
+                {
+                    tar = bot;
+                    previousDist = dist;
+                }
+            }
+
+        }
+        return tar;
     }
 
     bool aiTurnDone()
     {
         bool value = true;
+        float botNum = 0;
         foreach (GameObject bot in GameObject.FindGameObjectsWithTag("Enemy"))
         {
             if (!bot.GetComponent<UnitScript>().doneTurn)
             {
                 value = false;
+                botNum++;
             }
         }
+        turnTracker.fillAmount = 1 - (botNum / GameObject.FindGameObjectsWithTag("Enemy").Length);
         return value;
     }
 
@@ -377,50 +421,74 @@ public class GameManager : MonoBehaviour
 
         float zoom = Input.GetAxis("Zoom") * zoomSpeed * Time.deltaTime * -1;
         Camera.main.orthographicSize += zoom;
+        bars.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 0) * (2 - Camera.main.orthographicSize/10);
         if (Camera.main.orthographicSize >= 15)
         {
             Camera.main.orthographicSize = 15;
+            bars.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
         }
         if (Camera.main.orthographicSize <= 3)
         {
             Camera.main.orthographicSize = 3;
+            bars.transform.localScale = new Vector3(2f, 2f, 1f);
         }
 
         if (!cameraPan)
         {
-            if (Input.mousePosition.x >= Screen.width)
-            {
-                camTarg.transform.position += camTarg.transform.right * screenScrollSpeed;
-            }
-            if (Input.mousePosition.x <= 1)
-            {
-                camTarg.transform.position -= camTarg.transform.right * screenScrollSpeed;
-            }
-            if (Input.mousePosition.y >= Screen.height)
-            {
-                camTarg.transform.position += camTarg.transform.forward * screenScrollSpeed;
-            }
-            if (Input.mousePosition.y <= 1)
-            {
-                camTarg.transform.position -= camTarg.transform.forward * screenScrollSpeed;
-            }
+            
+                if (Input.mousePosition.x >= Screen.width)
+                {
+                    camTarg.transform.position += camTarg.transform.right * screenScrollSpeed * Time.deltaTime;
+                    if (Vector3.Distance(camTarg.transform.position, closestObject(camTarg.transform, "Bot").transform.position) > 50)
+                    {
+                        camTarg.transform.position -= camTarg.transform.right * screenScrollSpeed * Time.deltaTime;
+                    }
+                }
+                if (Input.mousePosition.x <= 1)
+                {
+                    camTarg.transform.position -= camTarg.transform.right * screenScrollSpeed * Time.deltaTime;
+                    if (Vector3.Distance(camTarg.transform.position, closestObject(camTarg.transform, "Bot").transform.position) > 50)
+                    {
+                        camTarg.transform.position += camTarg.transform.right * screenScrollSpeed * Time.deltaTime;
+                    }
+
+                }
+                if (Input.mousePosition.y >= Screen.height)
+                {
+                    camTarg.transform.position += camTarg.transform.forward * screenScrollSpeed * Time.deltaTime;
+                    if (Vector3.Distance(camTarg.transform.position, closestObject(camTarg.transform, "Bot").transform.position) > 50)
+                    {
+                        camTarg.transform.position -= camTarg.transform.forward * screenScrollSpeed * Time.deltaTime;
+                    }
+                }
+                if (Input.mousePosition.y <= 1)
+                {
+                    camTarg.transform.position -= camTarg.transform.forward * screenScrollSpeed * Time.deltaTime;
+                    if (Vector3.Distance(camTarg.transform.position, closestObject(camTarg.transform, "Bot").transform.position) > 50)
+                    {
+                        camTarg.transform.position += camTarg.transform.forward * screenScrollSpeed * Time.deltaTime;
+                    }
+                }          
+            
         }
         else
         {
-            
+            if (selectedUnit != null)
+            {
                 Vector3 destination = selectedUnit.transform.position;
                 Transform targ = camTarg.transform;
                 Vector3 targPos = destination + Vector3.up;
                 targPos.y = 2.5f;
                 Vector3 vecToDist = (targPos - targ.position).normalized;
                 float dist = Vector3.Distance(targPos, targ.position);
-                
+
                 if (dist <= 1)
                 {
                     //dist = 0.001f;
                     cameraPan = false;
                 }
                 targ.position += vecToDist * (camSpeed - camSpeed / (dist + 1)) * Time.deltaTime;
+            }   
             
         }
 
@@ -440,7 +508,7 @@ public class GameManager : MonoBehaviour
 
     public void selectUnit (UnitScript unit)
     {
-        if(selectedUnit != null && selectedUnit.action < 1)
+        if(selectedUnit != null)// && selectedUnit.action < 1)
         {
             selectedUnit.selected = false;
             selector.SetActive(false);
@@ -453,11 +521,16 @@ public class GameManager : MonoBehaviour
             selectedUnit = unit;
             selectedUnit.selected = true;
             cameraPan = true;
+            selector.GetComponent<SelectorScript>().hasTarget = false;
+            selector.GetComponent<SelectorScript>().target = null;
             selectedUnit.SetCorrectColor();
         }
         else
         {
+            selectedUnit.selected = false;
             selectedUnit.SetCorrectColor();
+            selector.GetComponent<SelectorScript>().hasTarget = false;
+            selector.GetComponent<SelectorScript>().target = null;
             selectedUnit = null;
         }
         updateUI();
@@ -506,8 +579,8 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(4, 7);
-            setUp.Health = Random.Range(3, 6);
+            setUp.Sentience = Random.Range(6, 8);
+            setUp.Health = Random.Range(4, 6);
             setUp.Attack = Random.Range(2, 3);
             setUp.MovementSpeed = Random.Range(2, 3);
             setUp.playerColor = Color.black;
@@ -520,8 +593,8 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(4, 7);
-            setUp.Health = Random.Range(3, 6);
+            setUp.Sentience = Random.Range(8, 10);
+            setUp.Health = Random.Range(5, 7);
             setUp.Attack = Random.Range(2, 3);
             setUp.MovementSpeed = Random.Range(2, 3);
             setUp.playerColor = Color.black;
@@ -534,8 +607,8 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(6, 9);
-            setUp.Health = Random.Range(4, 7);
+            setUp.Sentience = Random.Range(12, 14);
+            setUp.Health = Random.Range(6, 8);
             setUp.Attack = Random.Range(3, 4);
             setUp.MovementSpeed = Random.Range(3, 4);
             setUp.playerColor = Color.black;
@@ -548,8 +621,8 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(6, 9);
-            setUp.Health = Random.Range(4, 7);
+            setUp.Sentience = Random.Range(16, 18);
+            setUp.Health = Random.Range(7, 9);
             setUp.Attack = Random.Range(3, 4);
             setUp.MovementSpeed = Random.Range(3, 4);
             setUp.playerColor = Color.black;
@@ -562,8 +635,8 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(7, 10);
-            setUp.Health = Random.Range(5, 8);
+            setUp.Sentience = Random.Range(20, 24);
+            setUp.Health = Random.Range(10, 12);
             setUp.Attack = Random.Range(4, 6);
             setUp.MovementSpeed = Random.Range(3, 4);
             setUp.playerColor = Color.black;
@@ -663,26 +736,51 @@ public class GameManager : MonoBehaviour
         updateUI();
     }
 
-    public void TakeAction()
+    public void showBars(UnitScript unit)
     {
-        Vector3 pos = selectedUnit.transform.position + Vector3.up;
-        pos = Camera.main.WorldToScreenPoint(pos);
-        pos.y += talkBox.GetComponent<RectTransform>().rect.height / 2;
-        talkBox.transform.position = pos;
-
-        IEnumerable<Toggle> activeToggles = actionSelectToggleGroup.ActiveToggles();
-        string Action = "";
-        foreach (Toggle t in activeToggles)
+        if (unit != null)
         {
-            if(t.IsActive())
+            //0.5f
+            //2.5f
+            float hchange = 2.5f;
+            if (!unit.sentient)
             {
-                Action = t.gameObject.GetComponentInChildren<Text>().text;
+                //1f
+                //3f
+                hchange = 3f;
+            }
+            Vector3 pos = unit.transform.position + Vector3.up * (hchange - (((Camera.main.orthographicSize-3)/7)/1));
+            pos = Camera.main.WorldToScreenPoint(pos);
+            pos.y += bars.GetComponent<RectTransform>().rect.height / 2;
+            bars.transform.position = pos;
+
+            float num = unit.Health;
+            float dom = unit.MaxHp;
+            healthBar.transform.GetChild(0).GetComponent<Image>().fillAmount = num / dom;
+            num = unit.Sentience;
+            dom = unit.MaxSent;
+            sentienceBar.transform.GetChild(0).GetComponent<Image>().fillAmount = 1 - num / dom;
+
+            if (unit.sentient)
+            {
+                sentienceBar.SetActive(false);
+            }
+            else
+            {
+                sentienceBar.SetActive(true);
+            }
+            if (!bars.activeSelf)
+            {
+                bars.SetActive(true);
             }
         }
-
-        talkText.text = Action;
-
-        talkBox.SetActive(true);
+        else
+        {
+            if (bars.activeSelf)
+            {
+                bars.SetActive(false);
+            }
+        }
     }
 
     public bool ActionSelect()
@@ -694,5 +792,22 @@ public class GameManager : MonoBehaviour
            value = t.isOn;
         }
         return value;
+    }
+
+    public void TogglePause()
+    {
+        paused = !paused;
+        pauseMenu.SetActive(!pauseMenu.activeSelf);
+        if(selectedUnit != null)
+        {
+            selectedPanel.SetActive(!selectedPanel.activeSelf);
+        }
+    }
+
+    public void endGame()
+    {
+        paused = true;
+        winLoose.SetActive(true);
+        winLoose.transform.GetChild(0).gameObject.SetActive(false);
     }
 }

@@ -30,6 +30,11 @@ public class LaserScript : MonoBehaviour
         {
             other.GetComponent<UnitScript>().Health -= Damage;
             die = true;
+            if (other.GetComponent<UnitScript>().Health > 0)
+            {
+                other.GetComponent<UnitScript>().aud.PlayOneShot(other.GetComponent<UnitScript>().pers.getClip("damage"));
+            }
+            
            // Destroy(this.gameObject);
         }
         if (other.CompareTag("Enemy"))
@@ -37,6 +42,10 @@ public class LaserScript : MonoBehaviour
             other.GetComponent<UnitScript>().Health -= Damage;
             die = true;
            // Destroy(this.gameObject);
+        }
+        if (other.CompareTag("Wall"))
+        {
+            die = true;
         }
         
     }

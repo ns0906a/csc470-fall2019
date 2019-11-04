@@ -565,6 +565,7 @@ GameObject:
   - component: {fileID: 5293750734228652408}
   - component: {fileID: 5293750734228652409}
   - component: {fileID: 2124117973578308471}
+  - component: {fileID: 160797221}
   m_Layer: 0
   m_Name: Unit
   m_TagString: Bot
@@ -600,28 +601,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61a053df698b48949ac5d7a7776bb871, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name: Frederick
-  playerColor: {r: 0.8962264, g: 0.8647517, b: 0.080322154, a: 0}
-  Health: 0
-  Attack: 0
-  Love: 0
-  MovementSpeed: 0
+  Name: Null
+  playerColor: {r: 0, g: 1, b: 0.97335625, a: 1}
+  Health: 6
+  Attack: 4
+  Love: 3
+  MovementSpeed: 4
+  Sentience: 0
   doneTurn: 0
   action: 0
-  specialAction: 0
+  specialAction: 6
   target: {fileID: 0}
   sentient: 1
   deactivated: 0
   choice: 0
   decision: 0
+  start: {x: 0, y: 0, z: 0}
   frontRing: {fileID: 2337805771710771518}
   backRing: {fileID: 6307324875167870006}
   basePlate: {fileID: 6151492819054215019}
+  face: {fileID: 8384527200030764952}
+  aud: {fileID: 0}
+  pers: {fileID: 0}
   hoverColor: {r: 0.4669811, g: 1, b: 0.5443095, a: 1}
   SelectedColor: {r: 0, g: 1, b: 0.028357267, a: 1}
   selected: 0
   fired: 0
-  activated: 0
+  activated: 1
   destination: {x: 0, y: 0, z: 0}
   re: {fileID: 3964566350882072028}
   laser: {fileID: 7955696271324103158, guid: 754e8b8b58c60564ea77f3af6f9213ec, type: 3}
@@ -657,6 +663,102 @@ CapsuleCollider:
   m_Height: 3.454216
   m_Direction: 1
   m_Center: {x: 0, y: 0.71699953, z: 0}
+--- !u!82 &160797221
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5293750734228652410}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &5489386374043570510
 GameObject:
   m_ObjectHideFlags: 0

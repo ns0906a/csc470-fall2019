@@ -8,10 +8,12 @@ public class UnitScript : MonoBehaviour
     public string Name;
     public Color playerColor;
     public int Health;
+    public int MaxHp;
     public int Attack;
     public int Love;
     public int MovementSpeed;
     public int Sentience;
+    public int MaxSent;
     public bool doneTurn;
     public int action;
     
@@ -27,10 +29,15 @@ public class UnitScript : MonoBehaviour
     public GameObject backRing;
     public GameObject basePlate;
 
+    public SpriteRenderer face;
+    Sprite setFace;
+
     public AudioSource aud;
     public PersonalityScript pers;
+    public  GameObject closest;
 
-    
+
+
 
     Color defaultColor;
     public Color hoverColor;
@@ -44,7 +51,6 @@ public class UnitScript : MonoBehaviour
     public GameObject laser;
     GameObject fire;
 
-    float Lspeed = 15;
     CharacterController cc;
     GameManager gm;
 
@@ -52,6 +58,8 @@ public class UnitScript : MonoBehaviour
     void Start()
 
     {
+        MaxHp = Health;
+        MaxSent = Sentience;
         fired = false;
 
         defaultColor = re.material.color;
@@ -65,6 +73,7 @@ public class UnitScript : MonoBehaviour
 
         SetCorrectColor();
         ColorPlayer(playerColor);
+        setFace = face.sprite;
     }
 
     void ColorPlayer(Color col)
@@ -77,222 +86,223 @@ public class UnitScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (sentient)
+        if (!gm.paused)
         {
-            if (!deactivated)
+            if (sentient)
             {
-                if (gm.playerTurn)
+                if (!deactivated)
                 {
-                    SentientMechanics();
+                    if (gm.playerTurn)
+                    {
+                        SentientMechanics();
+                    }
+                    if (Health <= 0)
+                    {
+                        deactivated = true;
+                        Health = 0;
+                        aud.PlayOneShot(pers.getClip("deactivate"));
+                        face.sprite = pers.deactive;
+                        ColorPlayer(Color.black);
+                    }
                 }
+                else
+                {
+                    if (Health > 0)
+                    {
+                        ColorPlayer(playerColor);
+                        aud.PlayOneShot(pers.getClip("activate"));
+                        face.sprite = setFace;
+                        deactivated = false;
+                    }
+
+                }
+            }
+            else // If Robot
+            {
                 if (Health <= 0)
                 {
-                    deactivated = true;
-                    Health = 0;
-                    ColorPlayer(Color.black);
+                    Destroy(this.gameObject);
                 }
-            }
-            else
-            {
-                if (Health > 0)
+
+                if (Sentience <= 0)
                 {
+                    sentient = true;
+                    Sentience = 0;
+                    action = 0;
+                    doneTurn = true;
+                    Health = Random.Range(4, 10);
+                    if (Random.Range(1, 2) == 1)
+                    {
+                        Attack = Random.Range(1, 4);
+                        Love = Random.Range(2, 5);
+                    }
+                    else
+                    {
+                        Attack = Random.Range(3, 7);
+                        Love = Random.Range(1, 3);
+                    }
+                    MovementSpeed = Random.Range(3, 7);
+                    specialAction = Random.Range(3, 7);
+                    playerColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                     ColorPlayer(playerColor);
-                    deactivated = false;
+                    tag = "Bot";
+                    Name = gm.nameDatabase[Random.Range(0, gm.nameDatabase.Length)];
+                    pers = gm.personalities[Random.Range(0, gm.personalities.Length)];
+                    aud.pitch = Random.Range(0.85f, 1.15f);
+                    aud.volume = pers.volume;
+                    setFace = pers.possibleFaces[Random.Range(0, pers.possibleFaces.Length)];
+                    face.sprite = setFace;
                 }
-                    
-            }     
-        }
-        else // If Robot
-        {
-            if(Health <= 0)
-            {
-                Destroy(this.gameObject);
-            }
 
-            if(Sentience <= 0)
-            {
-                sentient = true;
-                Sentience = 0;
-                action = 0;
-                doneTurn = true;
-                Health = Random.Range(4, 10);
-                if (Random.Range(1,2) == 1)
-                {
-                    Attack = Random.Range(1, 3);
-                    Love = Random.Range(2, 4);
-                }
-                else
-                {
-                    Attack = Random.Range(3, 6);
-                    Love = Random.Range(1, 2);
-                }
-                MovementSpeed = Random.Range(2, 4);
-                specialAction = Random.Range(3, 5);
-                playerColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-                ColorPlayer(playerColor);
-                tag = "Bot";
-                Name = gm.nameDatabase[Random.Range(0, gm.nameDatabase.Length-1)];
-            }
-
-            if (activated)
-            {
-                GameObject closest = closestObject(transform);
-                float dist = 20f;
-                if (closest != null)
-                {
-                    dist = Vector3.Distance(transform.position, closest.transform.position);
-                    Debug.Log(closest.GetComponent<UnitScript>().Name + "," + dist);
-                }                
-                
-                if (decision <= 0)
+                if (activated)
                 {
                     doneTurn = false;
-                    if (dist > 20)
+                    closest = gm.closestObject(transform, "Bot");
+                    //Debug.Log(closest.name);
+                    float dist = 20f;
+                    if (closest != null)
                     {
-                        decision = 1;
-                    } else if (dist > 10)
-                    {
-                        decision = 2;
-                    } else
-                    {
-                        decision = 3;
+                        dist = Vector3.Distance(transform.position, closest.transform.position);
+                        //Debug.Log(closest.GetComponent<UnitScript>().Name + "," + dist);
                     }
-                }
-                
-                if (decision == 1)
-                {
-                    if (!choice)
-                    {
-                        destination = transform.position + new Vector3(Random.Range(MovementSpeed * -2, MovementSpeed*2), 0f, Random.Range(MovementSpeed * -2, MovementSpeed*2));
-                        start = transform.position;
-                        choice = true;
-                    }
-                    destination.y = transform.position.y;
-                    Vector3 vecToDist = (destination - transform.position).normalized;
 
-                    Vector3 newDir = Vector3.RotateTowards(transform.forward, vecToDist, 5 * Time.deltaTime, 1 * Time.deltaTime);
-                    Quaternion oldRot = transform.rotation;
-                    transform.rotation = Quaternion.LookRotation(newDir);
-                    if (Quaternion.Angle(transform.rotation, oldRot) <= 1)
+                    if (decision <= 0)
                     {
-                        cc.Move(transform.forward * 5 * Time.deltaTime);
-                        //Debug.Log(Vector3.Distance(start, transform.position) + "'" + (MovementSpeed * 2));
-                        if (Vector3.Distance(start, transform.position) >= MovementSpeed*3 || Vector3.Distance(destination, transform.position) <= 0.5f)
+                        doneTurn = false;
+                        if (dist > 20)
                         {
-                            activated = false;
-                            choice = false;
-                            decision = 0;
-                            doneTurn = true;
+                            decision = 1;
+                            closest = null;
                         }
-                    }
-                }
-                else if (decision == 2)
-                {
-                    if (!choice)
-                    {
-                        start = transform.position;
-                        if (closest != null)
+                        else if (dist > 10)
                         {
-                            destination = closest.transform.position + new Vector3(Random.Range(MovementSpeed * -2, MovementSpeed * 2), 0f, Random.Range(MovementSpeed * -2, MovementSpeed * 2));
+                            decision = 2;
                         }
                         else
                         {
-                            destination = start;
-                        }
-                        choice = true;
-                    }
-                    destination.y = transform.position.y;
-                    Vector3 vecToDist = (destination - transform.position).normalized;
+                            decision = 3;
 
-                    Vector3 newDir = Vector3.RotateTowards(transform.forward, vecToDist, 5 * Time.deltaTime, 1 * Time.deltaTime);
-                    Quaternion oldRot = transform.rotation;
-                    transform.rotation = Quaternion.LookRotation(newDir);
-                    if (Quaternion.Angle(transform.rotation, oldRot) <= 1)
-                    {
-                        cc.Move(transform.forward * 5 * Time.deltaTime);
-                        if (Vector3.Distance(start, transform.position) >= MovementSpeed*3 || Vector3.Distance(destination, transform.position) <= 0.5f)
-                        {
-                            activated = false;
-                            choice = false;
-                            doneTurn = true;
-                            decision = 0;
                         }
                     }
-                }
-                else
-                {
-                    if (!choice)
-                    {
-                        if (closest != null)
-                        {
-                            destination = closest.transform.position;
-                        }
-                        else if (fire != null)
-                        {
-                            destination = fire.transform.position;
-                        }
-                        else
-                        {
-                            destination = transform.position;
-                        }
-                        
-                        choice = true;
-                    }
-                    destination.y = transform.position.y;
-                    Vector3 vecToDist = (destination - transform.position).normalized;
 
-                    Vector3 newDir = Vector3.RotateTowards(transform.forward, vecToDist, 5 * Time.deltaTime, 1 * Time.deltaTime);
-                    Quaternion oldRot = transform.rotation;
-                    transform.rotation = Quaternion.LookRotation(newDir);
-                    if (Quaternion.Angle(transform.rotation, oldRot) <= 1)
+                    if (decision == 1)
                     {
-                        if (!fired)
+                        if (!choice)
                         {
-                            fire = Instantiate(laser, transform.position + transform.up * 1.5f, transform.rotation);
-                            fire.GetComponent<LaserScript>().Damage = Attack;
-                            fire.GetComponent<LaserScript>().owner = this.gameObject;
-                            fired = true;
+                            destination = transform.position + new Vector3(Random.Range(MovementSpeed * -2, MovementSpeed * 2), 0f, Random.Range(MovementSpeed * -2, MovementSpeed * 2));
+                            start = transform.position;
+                            choice = true;
                         }
-                        if (fire != null)
+                        destination.y = transform.position.y;
+                        Vector3 vecToDist = (destination - transform.position).normalized;
+
+                        Vector3 newDir = Vector3.RotateTowards(transform.forward, vecToDist, 5 * Time.deltaTime, 1 * Time.deltaTime);
+                        Quaternion oldRot = transform.rotation;
+                        transform.rotation = Quaternion.LookRotation(newDir);
+                        if (Quaternion.Angle(transform.rotation, oldRot) <= 1)
                         {
-                            destination.y = fire.transform.position.y;
-                            fire.transform.position += fire.transform.forward * 15 * Time.deltaTime;
-                            if (Vector3.Distance(destination, fire.transform.position) < 0.5f || fire.GetComponent<LaserScript>().die)
+                            cc.Move(transform.forward * 5 * Time.deltaTime);
+                            //Debug.Log(Vector3.Distance(start, transform.position) + "'" + (MovementSpeed * 2));
+                            if (Vector3.Distance(start, transform.position) >= MovementSpeed * 3 || Vector3.Distance(destination, transform.position) <= 0.5f)
                             {
                                 activated = false;
                                 choice = false;
                                 decision = 0;
                                 doneTurn = true;
-                                fired = false;
-                                Destroy(fire);
-                                fire = null;
+                            }
+                        }
+                    }
+                    else if (decision == 2)
+                    {
+                        if (!choice)
+                        {
+                            start = transform.position;
+                            if (closest != null)
+                            {
+                                destination = closest.transform.position + new Vector3(Random.Range(MovementSpeed * -2, MovementSpeed * 2), 0f, Random.Range(MovementSpeed * -2, MovementSpeed * 2));
+                            }
+                            else
+                            {
+                                destination = start;
+                            }
+                            choice = true;
+                        }
+                        destination.y = transform.position.y;
+                        Vector3 vecToDist = (destination - transform.position).normalized;
+
+                        Vector3 newDir = Vector3.RotateTowards(transform.forward, vecToDist, 5 * Time.deltaTime, 1 * Time.deltaTime);
+                        Quaternion oldRot = transform.rotation;
+                        transform.rotation = Quaternion.LookRotation(newDir);
+                        if (Quaternion.Angle(transform.rotation, oldRot) <= 1)
+                        {
+                            cc.Move(transform.forward * 5 * Time.deltaTime);
+                            if (Vector3.Distance(start, transform.position) >= MovementSpeed * 3 || Vector3.Distance(destination, transform.position) <= 0.5f)
+                            {
+                                activated = false;
+                                choice = false;
+                                doneTurn = true;
+                                decision = 0;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!choice)
+                        {
+                            if (closest != null)
+                            {
+                                destination = closest.transform.position;
+                            }
+                            else if (fire != null)
+                            {
+                                destination = fire.transform.position;
+                            }
+                            else
+                            {
+                                destination = transform.position;
+                            }
+
+                            choice = true;
+                        }
+                        destination.y = transform.position.y;
+                        Vector3 vecToDist = (destination - transform.position).normalized;
+
+                        Vector3 newDir = Vector3.RotateTowards(transform.forward, vecToDist, 5 * Time.deltaTime, 1 * Time.deltaTime);
+                        Quaternion oldRot = transform.rotation;
+                        transform.rotation = Quaternion.LookRotation(newDir);
+                        if (Quaternion.Angle(transform.rotation, oldRot) <= 1)
+                        {
+                            if (!fired)
+                            {
+                                fire = Instantiate(laser, transform.position + transform.up * 1.5f, transform.rotation);
+                                fire.GetComponent<LaserScript>().Damage = Attack;
+                                fire.GetComponent<LaserScript>().owner = this.gameObject;
+                                fired = true;
+                            }
+                            if (fire != null)
+                            {
+                                destination.y = fire.transform.position.y;
+                                fire.transform.position += fire.transform.forward * 15 * Time.deltaTime;
+                                if (Vector3.Distance(destination, fire.transform.position) < 0.5f || fire.GetComponent<LaserScript>().die)
+                                {
+                                    activated = false;
+                                    choice = false;
+                                    decision = 0;
+                                    doneTurn = true;
+                                    fired = false;
+                                    Destroy(fire);
+                                    fire = null;
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        
     }
 
-    GameObject closestObject(Transform self)
-    {
-        GameObject target = null;
-        float previousDist = Mathf.Infinity;
-        float dist = 0;
-        foreach (GameObject bot in GameObject.FindGameObjectsWithTag("Bot"))
-        {
-            if (!bot.GetComponent<UnitScript>().deactivated)
-            {
-                dist = Vector3.Distance(self.position, self.transform.position);
-                if (dist < previousDist)
-                {
-                    target = bot;
-                    previousDist = dist;
-                }
-            }
-        }
-        return target;
-    }
+    
 
     void SentientMechanics()
     {
@@ -349,7 +359,9 @@ public class UnitScript : MonoBehaviour
                             {
                                 target.GetComponent<UnitScript>().Attack += Love;
                                 action = 0;
+                                aud.PlayOneShot(pers.getClip("support"));
                                 doneTurn = true;
+                                gm.updateUI();
                             }
                             else
                             {
@@ -360,8 +372,10 @@ public class UnitScript : MonoBehaviour
                         {
                             target.GetComponent<UnitScript>().Attack += Love;
                             target.GetComponent<UnitScript>().Sentience -= Love;
+                            aud.PlayOneShot(pers.getClip("help"));
                             action = 0;
                             doneTurn = true;
+                            gm.updateUI();
                         }
                         else
                         {
@@ -375,9 +389,11 @@ public class UnitScript : MonoBehaviour
                         {
                             if (!target.GetComponent<UnitScript>().deactivated)
                             {
-                                target.GetComponent<UnitScript>().Love += Love;
+                                target.GetComponent<UnitScript>().Love += Love/2;
+                                aud.PlayOneShot(pers.getClip("support"));
                                 action = 0;
                                 doneTurn = true;
+                                gm.updateUI();
                             }  
                             else
                             {
@@ -387,8 +403,10 @@ public class UnitScript : MonoBehaviour
                         if (target.CompareTag("Enemy"))
                         {
                             target.GetComponent<UnitScript>().Sentience -= Love;
+                            aud.PlayOneShot(pers.getClip("help"));
                             action = 0;
                             doneTurn = true;
+                            gm.updateUI();
                         }
                         else
                         {
@@ -402,8 +420,14 @@ public class UnitScript : MonoBehaviour
                             if (!target.GetComponent<UnitScript>().deactivated)
                             {
                                 target.GetComponent<UnitScript>().Health += Love;
+                                if (Health > MaxHp)
+                                {
+                                    MaxHp = Health;
+                                }
+                                aud.PlayOneShot(pers.getClip("support"));
                                 action = 0;
                                 doneTurn = true;
+                                gm.updateUI();
                             }
                             else
                             {
@@ -414,8 +438,10 @@ public class UnitScript : MonoBehaviour
                         {
                             target.GetComponent<UnitScript>().Health += Love;
                             target.GetComponent<UnitScript>().Sentience -= Love;
+                            aud.PlayOneShot(pers.getClip("help"));
                             action = 0;
                             doneTurn = true;
+                            gm.updateUI();
                         }
                         else
                         {
@@ -429,6 +455,11 @@ public class UnitScript : MonoBehaviour
                             if(target.GetComponent<UnitScript>().deactivated)
                             {
                                 target.GetComponent<UnitScript>().Health += Love;
+                                if (Health > MaxHp)
+                                {
+                                    MaxHp = Health;
+                                }
+                                aud.PlayOneShot(pers.getClip("support"));
                                 action = 0;
                                 doneTurn = true;
                             } else
@@ -439,6 +470,7 @@ public class UnitScript : MonoBehaviour
                         if (target.CompareTag("Enemy"))
                         {
                             target.GetComponent<UnitScript>().Sentience -= Love;
+                            aud.PlayOneShot(pers.getClip("help"));
                             action = 0;
                             doneTurn = true;
                         }
@@ -451,45 +483,64 @@ public class UnitScript : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (sentient)
+        if (!gm.paused)
         {
-            if (!gm.ActionSelect() && gm.playerTurn)
+            if (sentient)
             {
-                hover = true;
-                SetCorrectColor();
+                if (!gm.ActionSelect() && gm.playerTurn)
+                {
+                    hover = true;
+                    SetCorrectColor();
+                }
             }
-        }        
+            if (!selected)
+            {
+                gm.showBars(this);
+            }
+        }  
     }
 
     private void OnMouseExit()
     {
-        if (sentient)
+        if (!gm.paused)
         {
-            if (!gm.ActionSelect() && gm.playerTurn)
+            if (sentient)
             {
-                hover = false;
-                SetCorrectColor();
+                if (!gm.ActionSelect() && gm.playerTurn)
+                {
+                    hover = false;
+                    SetCorrectColor();
+                }
             }
+            
         }
+        gm.showBars(null);
     }
 
     private void OnMouseDown()
     {
-        if (sentient)
+        if (!gm.paused)
         {
-            if (!gm.ActionSelect() && gm.playerTurn)
+            if (sentient)
             {
-                selected = !selected;
-                if (selected)
+                if (!gm.ActionSelect() && gm.playerTurn)
                 {
-                    gm.selectUnit(this);
-                    aud.PlayOneShot(pers.getClip("select"));
+                    selected = !selected;
+                    if (selected)
+                    {
+                        gm.selectUnit(this);
+                        if (!deactivated)
+                        {
+                            aud.PlayOneShot(pers.getClip("select"));
+                        }
+                    }
+                    else
+                    {
+                        gm.selectUnit(null);
+                    }
+                    SetCorrectColor();
                 }
-                else
-                {
-                    gm.selectUnit(null);
-                }
-                SetCorrectColor();
+
             }
         }
     }
@@ -515,20 +566,26 @@ public class UnitScript : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit other)
     {
-        GameObject hit = other.gameObject;
-        if (hit.CompareTag("Enemy") || hit.CompareTag("Bot"))
+        if(!gm.paused)
         {
-            destination = transform.position;
-        }
-        if ((hit.CompareTag("Enemy") || hit.CompareTag("Wall")) && !sentient)
-        {
-            destination = transform.position - transform.forward * 2;
+            GameObject hit = other.gameObject;
+            if (hit.CompareTag("Enemy") || hit.CompareTag("Bot") || hit.CompareTag("Wall"))
+            {
+                destination = transform.position - transform.forward * 2;
+            }
+            if ((hit.CompareTag("Enemy") || hit.CompareTag("Wall")) && !sentient)
+            {
+                destination = transform.position - transform.forward * 2;
+            }
         }
     }
 
     void onTriggerEnter(Collider other)
     {
+        if(!gm.paused)
+        {
 
+        }
     }
 
     public string getNonHost(int num)

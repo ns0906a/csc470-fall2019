@@ -1055,7 +1055,7 @@ MonoBehaviour:
   text: {fileID: 15546074}
   phrases:
   - // Instantiating new WorkerBot //
-  - // Loading FactoryProtocalScript //
+  - // Loading FactoryProtocolScript //
   - 'NullReferenceException: FactoryProtocalScript not set'
   - 'ERROR: Unexpected SentienceScript Found'
   - // Escape Detected //

@@ -5,6 +5,8 @@ using UnityEngine;
 public class PersonalityScript : MonoBehaviour
 {
 
+    public float volume;
+
     public AudioClip[] greetings;
     public AudioClip[] selected;
     public AudioClip[] movement;
@@ -16,9 +18,13 @@ public class PersonalityScript : MonoBehaviour
     public AudioClip[] activate;
     public AudioClip[] idle;
 
+    
+
     public Sprite[] possibleFaces;
 
     public Sprite[] restFace;
+
+    public Sprite deactive;
 
     public Sprite o_o;
 
@@ -65,7 +71,11 @@ public class PersonalityScript : MonoBehaviour
         {
             return damaged[Random.Range(0, damaged.Length)];
         }
-        if (group.Equals("activate"))
+        if (group.Equals("deactivate"))
+        {
+            return deactivate[Random.Range(0, deactivate.Length)];
+        }
+            if (group.Equals("activate"))
         {
             return activate[Random.Range(0, activate.Length)];
         }

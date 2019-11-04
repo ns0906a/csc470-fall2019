@@ -472,7 +472,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &182767066
 RectTransform:
   m_ObjectHideFlags: 0
@@ -929,7 +929,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1317895573
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1162,7 +1162,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1372923318
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1237,7 +1237,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1712648532
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1448,9 +1448,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   text: {fileID: 15546074}
   phrases:
-  - NullRefernceException
+  - NullReferenceException
   - Created by Nils Schofer
-  - 'Bot Voices: Adrian King, Erik Schofer, Timothy, Lundberg'
+  - 'Bot Voices: Adrian King, Erik Schofer, Timothy Lundberg'
   - 'Music/Sound: Made by using Beatbox'
   - 'Pictures/Spites: Made in Paint.net'
   - 'Fonts: Inconsalata (Open Font License)'
@@ -1477,6 +1477,11 @@ MonoBehaviour:
   sceneName: Main Menu
   waitTime: 4
   letterTime: 0.05
+  botPhases:
+  - {fileID: 182767065}
+  - {fileID: 1372923317}
+  - {fileID: 1317895572}
+  - {fileID: 1712648531}
 --- !u!95 &1844450973
 Animator:
   serializedVersion: 3
