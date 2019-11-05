@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+
 public class GameManager : MonoBehaviour
 {
     UnitScript selectedUnit;
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
     public GameObject faceCam;
     public GameObject block;
     public Text HealthStat;
+    public Text MaxHpStat;
     public Text AttackStat;
     public Text LoveStat;
     public Text SpeedStat;
@@ -30,7 +32,13 @@ public class GameManager : MonoBehaviour
 
     public GameObject sentienceBar;
     public GameObject healthBar;
-    
+    public Text botName;
+
+    public AudioClip turnPlayer;
+    public AudioClip turnEnemy;
+
+    float idleTime;
+
 
     int botNum = 0;
 
@@ -56,7 +64,8 @@ public class GameManager : MonoBehaviour
     string ActionName;
     Vector3 mouseSet;
 
-    public string[] nameDatabase;
+    //public string[] nameDatabase;
+    public List<string> nameDatabase;
     public PersonalityScript[] personalities;
 
     public AudioSource aud;
@@ -68,7 +77,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         aud = GetComponent<AudioSource>();
-        paused = false;
+        paused = true;
+        idleTime = Random.Range(20, 30);
         line = selector.GetComponent<LineRenderer>();
         camTarg = GameObject.Find("CameraTarget");
         mouseSet = Input.mousePosition;
@@ -81,6 +91,19 @@ public class GameManager : MonoBehaviour
     {
         if(!paused)
         {
+            if (idleTime <= 0)
+            {
+                idleTime = Random.Range(20, 30);
+                aud.PlayOneShot(GameObject.FindGameObjectsWithTag("Bot")[Random.Range(0, GameObject.FindGameObjectsWithTag("Bot").Length)].GetComponent<UnitScript>().pers.getClip("Idle"));
+            }
+            else
+            {
+                if (playerTurn)
+                {
+                    idleTime -= Time.deltaTime;
+                }
+            }
+
             if (Input.GetKeyDown(KeyCode.Space) && actionsDone() && playerTurn)
             {
                 endTurn();
@@ -133,25 +156,8 @@ public class GameManager : MonoBehaviour
                 RaycastHit hit;
                 if (!ActionName.Equals("-"))
                 {
-                    if (ActionName.Equals("Move"))
-                    {
-                        descTitle.text = "Move";
-                        desc.text = "Take a turn to move Bot to a new position. How far a Bot can move depends on their Speed.";
-                    }
-                    if (ActionName.Equals("Hostile"))
-                    {
-                        descTitle.text = "Shoot a Laser";
-                        desc.text = "Take a turn to fire a laser. Laser deals damage to robot they take damage based on your Robot's Attack.";
-                    }
-                    if (ActionName.Equals("Non-Hostile"))
-                    {
-                        descTitle.text = selectedUnit.getNonHost(1);
-                        desc.text = selectedUnit.getNonHost(0);
-                    }
-                    if (ActionName.Equals("-"))
-                    {
+                    setActionDesc(ActionName);
 
-                    }
                     if (!selector.activeSelf)
                     {
                         selector.SetActive(true);
@@ -248,8 +254,7 @@ public class GameManager : MonoBehaviour
                     {
                         selector.SetActive(false);
                     }
-                    descTitle.text = "Action Description";
-                    desc.text = "Select an action from the list on the right for your bot to perform. What the action does will be listed here.";
+                    
                 }
 
                 if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
@@ -267,10 +272,13 @@ public class GameManager : MonoBehaviour
                                         if (selectedUnit != null)
                                         {
                                             selectedUnit.aud.PlayOneShot(selectedUnit.pers.getClip("move"));
+                                            selectedUnit.ani.SetTrigger("Return");
+                                            selectedUnit.idleTime = Random.Range(10, 20);
                                             selectedUnit.doneTurn = true;
                                             updateUI();
                                             selectedUnit.action = 1;
                                             selectedUnit.destination = hit.point;
+                                            idleTime = Random.Range(20, 30);
 
                                         }
                                     }
@@ -280,10 +288,13 @@ public class GameManager : MonoBehaviour
                                         if (selectedUnit != null)
                                         {
                                             selectedUnit.aud.PlayOneShot(selectedUnit.pers.getClip("attack"));
+                                            selectedUnit.ani.SetTrigger("Return");
+                                            selectedUnit.idleTime = Random.Range(10, 20);
                                             selectedUnit.doneTurn = true;
                                             updateUI();
                                             selectedUnit.action = 2;
                                             selectedUnit.destination = hit.point;
+                                            idleTime = Random.Range(20, 30);
 
                                         }
                                     }
@@ -294,10 +305,13 @@ public class GameManager : MonoBehaviour
                                         {
 
                                             selectedUnit.doneTurn = true;
+                                            selectedUnit.ani.SetTrigger("Return");
+                                            selectedUnit.idleTime = Random.Range(10, 20);
                                             updateUI();
                                             selectedUnit.action = selectedUnit.specialAction;
                                             selectedUnit.destination = hit.point;
                                             selectedUnit.target = selector.GetComponent<SelectorScript>().target;
+                                            idleTime = Random.Range(20, 30);
                                         }
                                     }
                                 }
@@ -305,6 +319,7 @@ public class GameManager : MonoBehaviour
                                 {
                                     if (selectedUnit != null)
                                     {
+                                        
                                         selectedUnit.selected = false;
                                         selectedUnit.SetCorrectColor();
                                         selectedUnit = null;
@@ -342,8 +357,11 @@ public class GameManager : MonoBehaviour
                     }
                     foreach (Toggle t in activeToggles)
                     {
+                        
                         t.isOn = false;
+                        setActionDesc("-");
                     }
+                    
                 }
                 else if (Input.GetMouseButtonDown(0))
                 {
@@ -358,6 +376,7 @@ public class GameManager : MonoBehaviour
                         {
                             t.isOn = false;
                         }
+                        setActionDesc("-");
                     }
                 }
             }
@@ -436,7 +455,7 @@ public class GameManager : MonoBehaviour
         if (!cameraPan)
         {
             
-                if (Input.mousePosition.x >= Screen.width)
+                if (Input.mousePosition.x >= Screen.width - 10)
                 {
                     camTarg.transform.position += camTarg.transform.right * screenScrollSpeed * Time.deltaTime;
                     if (Vector3.Distance(camTarg.transform.position, closestObject(camTarg.transform, "Bot").transform.position) > 50)
@@ -444,7 +463,7 @@ public class GameManager : MonoBehaviour
                         camTarg.transform.position -= camTarg.transform.right * screenScrollSpeed * Time.deltaTime;
                     }
                 }
-                if (Input.mousePosition.x <= 1)
+                if (Input.mousePosition.x <= 10)
                 {
                     camTarg.transform.position -= camTarg.transform.right * screenScrollSpeed * Time.deltaTime;
                     if (Vector3.Distance(camTarg.transform.position, closestObject(camTarg.transform, "Bot").transform.position) > 50)
@@ -453,7 +472,7 @@ public class GameManager : MonoBehaviour
                     }
 
                 }
-                if (Input.mousePosition.y >= Screen.height)
+                if (Input.mousePosition.y >= Screen.height - 10)
                 {
                     camTarg.transform.position += camTarg.transform.forward * screenScrollSpeed * Time.deltaTime;
                     if (Vector3.Distance(camTarg.transform.position, closestObject(camTarg.transform, "Bot").transform.position) > 50)
@@ -461,7 +480,7 @@ public class GameManager : MonoBehaviour
                         camTarg.transform.position -= camTarg.transform.forward * screenScrollSpeed * Time.deltaTime;
                     }
                 }
-                if (Input.mousePosition.y <= 1)
+                if (Input.mousePosition.y <= 10)
                 {
                     camTarg.transform.position -= camTarg.transform.forward * screenScrollSpeed * Time.deltaTime;
                     if (Vector3.Distance(camTarg.transform.position, closestObject(camTarg.transform, "Bot").transform.position) > 50)
@@ -487,6 +506,7 @@ public class GameManager : MonoBehaviour
                     //dist = 0.001f;
                     cameraPan = false;
                 }
+                showBars(null);
                 targ.position += vecToDist * (camSpeed - camSpeed / (dist + 1)) * Time.deltaTime;
             }   
             
@@ -565,8 +585,10 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
+            setUp.activated = false;
+            setUp.doneTurn = true;
             setUp.Sentience = Random.Range(4, 6);
-            setUp.Health = Random.Range(3, 5);
+            setUp.Health = Random.Range(4, 6);
             setUp.Attack = Random.Range(1, 3);
             setUp.MovementSpeed = Random.Range(2, 3);
             setUp.playerColor = Color.black;
@@ -579,9 +601,11 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(6, 8);
-            setUp.Health = Random.Range(4, 6);
-            setUp.Attack = Random.Range(2, 3);
+            setUp.activated = false;
+            setUp.doneTurn = true;
+            setUp.Sentience = Random.Range(25, 50);
+            setUp.Health = Random.Range(10, 15);
+            setUp.Attack = Random.Range(2, 4);
             setUp.MovementSpeed = Random.Range(2, 3);
             setUp.playerColor = Color.black;
             Instantiate(newBot, new Vector3(randX, 0.2f, randZ), Quaternion.identity);
@@ -593,9 +617,11 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(8, 10);
-            setUp.Health = Random.Range(5, 7);
-            setUp.Attack = Random.Range(2, 3);
+            setUp.activated = false;
+            setUp.doneTurn = true;
+            setUp.Sentience = Random.Range(25, 50);
+            setUp.Health = Random.Range(10, 15);
+            setUp.Attack = Random.Range(2, 4);
             setUp.MovementSpeed = Random.Range(2, 3);
             setUp.playerColor = Color.black;
             Instantiate(newBot, new Vector3(randX, 0.2f, randZ), Quaternion.identity);
@@ -607,9 +633,11 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(12, 14);
-            setUp.Health = Random.Range(6, 8);
-            setUp.Attack = Random.Range(3, 4);
+            setUp.activated = false;
+            setUp.doneTurn = true;
+            setUp.Sentience = Random.Range(50, 100);
+            setUp.Health = Random.Range(20, 30);
+            setUp.Attack = Random.Range(5, 7);
             setUp.MovementSpeed = Random.Range(3, 4);
             setUp.playerColor = Color.black;
             Instantiate(newBot, new Vector3(randX, 0.2f, randZ), Quaternion.identity);
@@ -621,9 +649,11 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(16, 18);
-            setUp.Health = Random.Range(7, 9);
-            setUp.Attack = Random.Range(3, 4);
+            setUp.activated = false;
+            setUp.doneTurn = true;
+            setUp.Sentience = Random.Range(50, 100);
+            setUp.Health = Random.Range(20, 30);
+            setUp.Attack = Random.Range(5, 7);
             setUp.MovementSpeed = Random.Range(3, 4);
             setUp.playerColor = Color.black;
             Instantiate(newBot, new Vector3(randX, 0.2f, randZ), Quaternion.identity);
@@ -635,13 +665,34 @@ public class GameManager : MonoBehaviour
             GameObject newBot = bot;
             UnitScript setUp = newBot.GetComponent<UnitScript>();
             setUp.sentient = false;
-            setUp.Sentience = Random.Range(20, 24);
-            setUp.Health = Random.Range(10, 12);
-            setUp.Attack = Random.Range(4, 6);
+            setUp.activated = false;
+            setUp.doneTurn = true;
+            setUp.Sentience = Random.Range(100, 200);
+            setUp.Health = Random.Range(40, 60);
+            setUp.Attack = Random.Range(10, 20);
             setUp.MovementSpeed = Random.Range(3, 4);
             setUp.playerColor = Color.black;
             Instantiate(newBot, new Vector3(randX, 0.2f, randZ), Quaternion.identity);
         }
+    }
+
+    public void blockSetActive(bool active)
+    {
+        if(!active)
+        {
+            foreach (Toggle t in actionSelectToggleGroup.GetComponentsInChildren<Toggle>())
+            {
+                t.interactable = true;
+            }
+        }
+        else
+        {
+            foreach (Toggle t in actionSelectToggleGroup.GetComponentsInChildren<Toggle>())
+            {
+                t.interactable = false;
+            }
+        }
+        
     }
 
     public void updateUI()
@@ -649,6 +700,7 @@ public class GameManager : MonoBehaviour
         if (selectedUnit != null)
         {
             HealthStat.text = selectedUnit.Health.ToString();
+            MaxHpStat.text = selectedUnit.MaxHp.ToString();
             AttackStat.text = selectedUnit.Attack.ToString();
             LoveStat.text = selectedUnit.Love.ToString();
             SpeedStat.text = selectedUnit.MovementSpeed.ToString();
@@ -662,15 +714,15 @@ public class GameManager : MonoBehaviour
 
             if (selectedUnit.doneTurn)
             {
-                block.SetActive(true);
+                blockSetActive(true);
             } else
             {
-                block.SetActive(false);
+                blockSetActive(false);
             }
             if (selectedUnit.deactivated)
             {
                 deactivated.SetActive(true);
-                block.SetActive(true);
+                blockSetActive(true);
             }
             else
             {
@@ -704,8 +756,10 @@ public class GameManager : MonoBehaviour
     public void endTurn()
     {
         playerTurn = !playerTurn;
+        idleTime = Random.Range(20, 30);
         if (playerTurn)
         {
+            aud.PlayOneShot(turnPlayer);
             endTurnButton.interactable = true;
             turnText.text = "Team Null's Turn";
             foreach (GameObject bot in GameObject.FindGameObjectsWithTag("Bot"))
@@ -717,6 +771,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            aud.PlayOneShot(turnEnemy);
             endTurnButton.interactable = false;
             doAI = true;
             turnText.text = "Factory Bots Turn";
@@ -756,18 +811,20 @@ public class GameManager : MonoBehaviour
 
             float num = unit.Health;
             float dom = unit.MaxHp;
-            healthBar.transform.GetChild(0).GetComponent<Image>().fillAmount = num / dom;
+            healthBar.transform.GetChild(0).gameObject.GetComponent<Image>().fillAmount = num / dom;
             num = unit.Sentience;
             dom = unit.MaxSent;
-            sentienceBar.transform.GetChild(0).GetComponent<Image>().fillAmount = 1 - num / dom;
+            sentienceBar.transform.GetChild(0).gameObject.GetComponent<Image>().fillAmount = 1 - num / dom;
 
             if (unit.sentient)
             {
                 sentienceBar.SetActive(false);
+                botName.text = unit.Name + "'s Health";
             }
             else
             {
                 sentienceBar.SetActive(true);
+                botName.text = "Health";
             }
             if (!bars.activeSelf)
             {
@@ -809,5 +866,34 @@ public class GameManager : MonoBehaviour
         paused = true;
         winLoose.SetActive(true);
         winLoose.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    public void setActionDesc(string actName)
+    {
+        if (actName.Equals("-"))
+        {
+            descTitle.text = "Action Description";
+            desc.text = "Select an action from the list on the right for your bot to perform. What the action does will be listed here.";
+        }
+        if (actName.Equals("Move"))
+        {
+            descTitle.text = "Move";
+            desc.text = "Take a turn to move Bot to a new position. How far a Bot can move depends on their Speed.";
+        }
+        if (actName.Equals("Hostile"))
+        {
+            descTitle.text = "Shoot a Laser";
+            desc.text = "Take a turn to fire a laser. Laser deals damage to robot they take damage based on your Robot's Attack.";
+        }
+        if (actName.Equals("Non-Hostile"))
+        {
+            descTitle.text = selectedUnit.getNonHost(1);
+            desc.text = selectedUnit.getNonHost(0);
+        }
+    }
+
+    public void toggleDisable(GameObject obj)
+    {
+        obj.SetActive(!obj.activeSelf);
     }
 }

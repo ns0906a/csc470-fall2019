@@ -28,7 +28,14 @@ public class LaserScript : MonoBehaviour
         }
         if (other.CompareTag("Bot"))
         {
-            other.GetComponent<UnitScript>().Health -= Damage;
+            if (other.GetComponent<UnitScript>().Health <= 0)
+            {
+                other.GetComponent<UnitScript>().Health = 0;
+            }
+            else
+            {
+                other.GetComponent<UnitScript>().Health -= Damage;
+            }
             die = true;
             if (other.GetComponent<UnitScript>().Health > 0)
             {

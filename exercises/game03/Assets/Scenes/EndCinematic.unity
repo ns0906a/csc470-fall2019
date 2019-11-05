@@ -1452,6 +1452,7 @@ MonoBehaviour:
   - Created by Nils Schofer
   - 'Bot Voices: Adrian King, Erik Schofer, Timothy Lundberg'
   - 'Music/Sound: Made using BeepBox'
+  - 'Credits Song: Daisy Bell made using BeepBox'
   - 'Pictures/Spites: Made in Paint.net'
   - 'Fonts: Inconsalata (Open Font License)'
   - Everything else made in Unity
@@ -1465,8 +1466,10 @@ MonoBehaviour:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
   waitDelays:
   - 34
+  - 0.1
   - 0.1
   - 0.1
   - 0.1

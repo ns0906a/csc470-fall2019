@@ -13,8 +13,10 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -27,6 +29,9 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.HorizontalLayoutGroup
     - UnityEngine.UI.Image
+    - UnityEngine.UI.Mask
+    - UnityEngine.UI.ScrollRect
+    - UnityEngine.UI.Scrollbar
     - UnityEngine.UI.Text
     - UnityEngine.UI.Toggle
     - UnityEngine.UI.ToggleGroup
@@ -256,16 +261,24 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 108
       Script: {instanceID: 0}
+    - Class: 111
+      Script: {instanceID: 0}
     - Class: 114
       Script: {instanceID: 9660}
     - Class: 114
       Script: {instanceID: 9816}
     - Class: 114
+      Script: {instanceID: 9818}
+    - Class: 114
       Script: {instanceID: 9850}
     - Class: 114
       Script: {instanceID: 9858}
     - Class: 114
+      Script: {instanceID: 10148}
+    - Class: 114
       Script: {instanceID: 10238}
+    - Class: 114
+      Script: {instanceID: 10406}
     - Class: 114
       Script: {instanceID: 10476}
     - Class: 114
@@ -307,6 +320,10 @@ ScriptsOnlyBuild:
     - Class: 143
       Script: {instanceID: 0}
     - Class: 157
+      Script: {instanceID: 0}
+    - Class: 198
+      Script: {instanceID: 0}
+    - Class: 199
       Script: {instanceID: 0}
     - Class: 212
       Script: {instanceID: 0}
@@ -719,7 +736,7 @@ ScriptsOnlyBuild:
     className: BaseInput
   - hash:
       serializedVersion: 2
-      Hash: 8ce9b71ccebdd18e08932a4f51ef2cfc
+      Hash: b21eddab23e5332b8e91f7d4c70f0783
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: GameManager
@@ -785,7 +802,7 @@ ScriptsOnlyBuild:
     className: ToggleGroup
   - hash:
       serializedVersion: 2
-      Hash: be19b47f178d8968e5eca62df7999a66
+      Hash: d70ccde86794ecc7ee9e3a59caf97b32
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: UnitScript

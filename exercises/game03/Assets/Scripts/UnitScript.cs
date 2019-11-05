@@ -25,12 +25,22 @@ public class UnitScript : MonoBehaviour
     public int decision = 0;
     public Vector3 start;
 
+    public float idleTime;
+
     public GameObject frontRing;
     public GameObject backRing;
     public GameObject basePlate;
 
     public SpriteRenderer face;
     Sprite setFace;
+
+    public Texture Heart;
+    public Texture Arrow;
+    public Texture Smile;
+
+    public Animator ani;
+    public ParticleSystem particle;
+    public ParticleSystemRenderer part;
 
     public AudioSource aud;
     public PersonalityScript pers;
@@ -58,6 +68,8 @@ public class UnitScript : MonoBehaviour
     void Start()
 
     {
+        idleTime = Random.Range(10, 20);
+        ani = GetComponent<Animator>();
         MaxHp = Health;
         MaxSent = Sentience;
         fired = false;
@@ -88,6 +100,25 @@ public class UnitScript : MonoBehaviour
     {
         if (!gm.paused)
         {
+            if (idleTime <= 0)
+            {
+                if (sentient)
+                {
+                    ani.SetInteger("IdleCheck", Random.Range(0, 3));
+                }
+                else
+                {
+                    ani.SetInteger("IdleCheck", 0);
+                }
+                ani.SetTrigger("Idle");
+                idleTime = Random.Range(10, 20);
+            }
+            else
+            {
+                idleTime -= Time.deltaTime;
+
+            }
+
             if (sentient)
             {
                 if (!deactivated)
@@ -99,6 +130,7 @@ public class UnitScript : MonoBehaviour
                     if (Health <= 0)
                     {
                         deactivated = true;
+                        ani.SetTrigger("Deactive");
                         Health = 0;
                         aud.PlayOneShot(pers.getClip("deactivate"));
                         face.sprite = pers.deactive;
@@ -110,6 +142,8 @@ public class UnitScript : MonoBehaviour
                     if (Health > 0)
                     {
                         ColorPlayer(playerColor);
+                        ani.SetTrigger("Return");
+                        idleTime = 0;
                         aud.PlayOneShot(pers.getClip("activate"));
                         face.sprite = setFace;
                         deactivated = false;
@@ -122,6 +156,7 @@ public class UnitScript : MonoBehaviour
                 if (Health <= 0)
                 {
                     Destroy(this.gameObject);
+                    gm.showBars(null);
                 }
 
                 if (Sentience <= 0)
@@ -130,44 +165,42 @@ public class UnitScript : MonoBehaviour
                     Sentience = 0;
                     action = 0;
                     doneTurn = true;
-                    Health = Random.Range(4, 10);
-                    if (Random.Range(1, 2) == 1)
+                    //Health += Random.Range(2, 3);
+                    if (Health > MaxHp)
                     {
-                        Attack = Random.Range(1, 4);
-                        Love = Random.Range(2, 5);
+                        MaxHp = Health;
                     }
-                    else
-                    {
-                        Attack = Random.Range(3, 7);
-                        Love = Random.Range(1, 3);
-                    }
-                    MovementSpeed = Random.Range(3, 7);
+                    //Attack += Random.Range(1, 3);
+                    //Love += Random.Range(1, 3);
+                    MovementSpeed += Random.Range(1, 4);
                     specialAction = Random.Range(3, 7);
                     playerColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
                     ColorPlayer(playerColor);
                     tag = "Bot";
-                    Name = gm.nameDatabase[Random.Range(0, gm.nameDatabase.Length)];
+                    Name = gm.nameDatabase[Random.Range(0, gm.nameDatabase.Count)];
+                    gm.nameDatabase.Remove(Name);
                     pers = gm.personalities[Random.Range(0, gm.personalities.Length)];
                     aud.pitch = Random.Range(0.85f, 1.15f);
                     aud.volume = pers.volume;
                     setFace = pers.possibleFaces[Random.Range(0, pers.possibleFaces.Length)];
                     face.sprite = setFace;
+                    gm.showBars(null);
                 }
 
                 if (activated)
                 {
                     doneTurn = false;
                     closest = gm.closestObject(transform, "Bot");
-                    //Debug.Log(closest.name);
                     float dist = 20f;
                     if (closest != null)
                     {
                         dist = Vector3.Distance(transform.position, closest.transform.position);
-                        //Debug.Log(closest.GetComponent<UnitScript>().Name + "," + dist);
                     }
 
                     if (decision <= 0)
                     {
+                        ani.SetTrigger("Return");
+                        idleTime = Random.Range(10, 20);
                         doneTurn = false;
                         if (dist > 20)
                         {
@@ -202,7 +235,6 @@ public class UnitScript : MonoBehaviour
                         if (Quaternion.Angle(transform.rotation, oldRot) <= 1)
                         {
                             cc.Move(transform.forward * 5 * Time.deltaTime);
-                            //Debug.Log(Vector3.Distance(start, transform.position) + "'" + (MovementSpeed * 2));
                             if (Vector3.Distance(start, transform.position) >= MovementSpeed * 3 || Vector3.Distance(destination, transform.position) <= 0.5f)
                             {
                                 activated = false;
@@ -322,6 +354,7 @@ public class UnitScript : MonoBehaviour
                     if (action == 1)
                     {
                         cc.Move(transform.forward * 5 * Time.deltaTime);
+                        
                         if (Vector3.Distance(destination, transform.position) <= 0.5f)
                         {
                             action = 0;
@@ -358,6 +391,8 @@ public class UnitScript : MonoBehaviour
                             if (!target.GetComponent<UnitScript>().deactivated)
                             {
                                 target.GetComponent<UnitScript>().Attack += Love;
+                                target.GetComponent<UnitScript>().part.material.mainTexture = Arrow;
+                                target.GetComponent<UnitScript>().particle.Play();
                                 action = 0;
                                 aud.PlayOneShot(pers.getClip("support"));
                                 doneTurn = true;
@@ -372,6 +407,8 @@ public class UnitScript : MonoBehaviour
                         {
                             target.GetComponent<UnitScript>().Attack += Love;
                             target.GetComponent<UnitScript>().Sentience -= Love;
+                            target.GetComponent<UnitScript>().part.material.mainTexture = Arrow;
+                            target.GetComponent<UnitScript>().particle.Play();
                             aud.PlayOneShot(pers.getClip("help"));
                             action = 0;
                             doneTurn = true;
@@ -391,6 +428,8 @@ public class UnitScript : MonoBehaviour
                             {
                                 target.GetComponent<UnitScript>().Love += Love/2;
                                 aud.PlayOneShot(pers.getClip("support"));
+                                target.GetComponent<UnitScript>().part.material.mainTexture = Smile;
+                                target.GetComponent<UnitScript>().particle.Play();
                                 action = 0;
                                 doneTurn = true;
                                 gm.updateUI();
@@ -402,8 +441,11 @@ public class UnitScript : MonoBehaviour
                         }
                         if (target.CompareTag("Enemy"))
                         {
+                            target.GetComponent<UnitScript>().Love += Love / 2;
                             target.GetComponent<UnitScript>().Sentience -= Love;
                             aud.PlayOneShot(pers.getClip("help"));
+                            target.GetComponent<UnitScript>().part.material.mainTexture = Smile;
+                            target.GetComponent<UnitScript>().particle.Play();
                             action = 0;
                             doneTurn = true;
                             gm.updateUI();
@@ -420,9 +462,11 @@ public class UnitScript : MonoBehaviour
                             if (!target.GetComponent<UnitScript>().deactivated)
                             {
                                 target.GetComponent<UnitScript>().Health += Love;
-                                if (Health > MaxHp)
+                                target.GetComponent<UnitScript>().part.material.mainTexture = Heart;
+                                target.GetComponent<UnitScript>().particle.Play();
+                                if (target.GetComponent<UnitScript>().Health > target.GetComponent<UnitScript>().MaxHp)
                                 {
-                                    MaxHp = Health;
+                                    target.GetComponent<UnitScript>().MaxHp = target.GetComponent<UnitScript>().Health;
                                 }
                                 aud.PlayOneShot(pers.getClip("support"));
                                 action = 0;
@@ -438,6 +482,12 @@ public class UnitScript : MonoBehaviour
                         {
                             target.GetComponent<UnitScript>().Health += Love;
                             target.GetComponent<UnitScript>().Sentience -= Love;
+                            target.GetComponent<UnitScript>().part.material.mainTexture = Heart;
+                            target.GetComponent<UnitScript>().particle.Play();
+                            if (target.GetComponent<UnitScript>().Health > target.GetComponent<UnitScript>().MaxHp)
+                            {
+                                target.GetComponent<UnitScript>().MaxHp = target.GetComponent<UnitScript>().Health;
+                            }
                             aud.PlayOneShot(pers.getClip("help"));
                             action = 0;
                             doneTurn = true;
@@ -455,11 +505,13 @@ public class UnitScript : MonoBehaviour
                             if(target.GetComponent<UnitScript>().deactivated)
                             {
                                 target.GetComponent<UnitScript>().Health += Love;
-                                if (Health > MaxHp)
+                                if (target.GetComponent<UnitScript>().Health > target.GetComponent<UnitScript>().MaxHp)
                                 {
-                                    MaxHp = Health;
+                                    target.GetComponent<UnitScript>().MaxHp = target.GetComponent<UnitScript>().Health;
                                 }
                                 aud.PlayOneShot(pers.getClip("support"));
+                                target.GetComponent<UnitScript>().part.material.mainTexture = Heart;
+                                target.GetComponent<UnitScript>().particle.Play();
                                 action = 0;
                                 doneTurn = true;
                             } else
@@ -470,6 +522,8 @@ public class UnitScript : MonoBehaviour
                         if (target.CompareTag("Enemy"))
                         {
                             target.GetComponent<UnitScript>().Sentience -= Love;
+                            target.GetComponent<UnitScript>().part.material.mainTexture = Heart;
+                            target.GetComponent<UnitScript>().particle.Play();
                             aud.PlayOneShot(pers.getClip("help"));
                             action = 0;
                             doneTurn = true;
@@ -571,11 +625,11 @@ public class UnitScript : MonoBehaviour
             GameObject hit = other.gameObject;
             if (hit.CompareTag("Enemy") || hit.CompareTag("Bot") || hit.CompareTag("Wall"))
             {
-                destination = transform.position - transform.forward * 2;
+                destination = transform.position - (transform.forward * 2) - (transform.right * 2);
             }
-            if ((hit.CompareTag("Enemy") || hit.CompareTag("Wall")) && !sentient)
+            if (((hit.CompareTag("Enemy") || hit.CompareTag("Wall"))) && !sentient)
             {
-                destination = transform.position - transform.forward * 2;
+                destination = transform.position - (transform.forward * 2) - (transform.right * 2);
             }
         }
     }
@@ -584,7 +638,10 @@ public class UnitScript : MonoBehaviour
     {
         if(!gm.paused)
         {
-
+            if ((other.CompareTag("EndTrigger")) && !sentient)
+            {
+                destination = transform.position - (transform.forward * 2) - (transform.right * 2);
+            }
         }
     }
 
@@ -637,5 +694,7 @@ public class UnitScript : MonoBehaviour
                 return "";
             }
         }
-    } 
+    }
+    
+
 }
