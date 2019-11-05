@@ -16,6 +16,8 @@ public class UnitScript : MonoBehaviour
     public int MaxSent;
     public bool doneTurn;
     public int action;
+
+    public GameObject destroy;
     
     public int specialAction;
     public GameObject target;
@@ -155,8 +157,13 @@ public class UnitScript : MonoBehaviour
             {
                 if (Health <= 0)
                 {
-                    Destroy(this.gameObject);
                     gm.showBars(null);
+                    GameObject dest = Instantiate(destroy, transform.position,transform.rotation);
+                    dest.GetComponent<Animator>().SetInteger("Death",Random.Range(0, 2));
+                    dest.GetComponent<Animator>().SetTrigger("Die");
+
+                    Destroy(this.gameObject);
+                    
                 }
 
                 if (Sentience <= 0)

@@ -6074,7 +6074,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "Wake up and \nsmell the freedom"
+  m_Text: "Wake Up and \nSmell the Freedom"
 --- !u!222 &457129300
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -13042,8 +13042,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2113821832}
   m_HandleRect: {fileID: 2113821831}
   m_Direction: 2
-  m_Value: 0.9892167
-  m_Size: 0.24982338
+  m_Value: 0.98993963
+  m_Size: 0.23736455
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -25617,8 +25617,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -5, y: -363.5858}
-  m_SizeDelta: {x: 587.5, y: 990.7}
+  m_AnchoredPosition: {x: -5, y: -389.6}
+  m_SizeDelta: {x: 587.5, y: 1042.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2088749691
 MonoBehaviour:

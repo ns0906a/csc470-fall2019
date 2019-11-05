@@ -614,6 +614,7 @@ MonoBehaviour:
   MaxSent: 0
   doneTurn: 1
   action: 0
+  destroy: {fileID: 1088260382668237089, guid: 29cd66381d24a554c8c76a14714e38e6, type: 3}
   specialAction: 0
   target: {fileID: 0}
   sentient: 0
