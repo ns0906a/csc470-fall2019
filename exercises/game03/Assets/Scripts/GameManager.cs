@@ -802,7 +802,7 @@ public class GameManager : MonoBehaviour
             {
                 //1f
                 //3f
-                hchange = 3f;
+                hchange = 3.3f;
             }
             Vector3 pos = unit.transform.position + Vector3.up * (hchange - (((Camera.main.orthographicSize-3)/7)/1));
             pos = Camera.main.WorldToScreenPoint(pos);
@@ -819,7 +819,7 @@ public class GameManager : MonoBehaviour
             if (unit.sentient)
             {
                 sentienceBar.SetActive(false);
-                botName.text = unit.Name + "'s Health";
+                botName.text = unit.Name;
             }
             else
             {

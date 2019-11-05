@@ -1436,7 +1436,6 @@ MonoBehaviour:
   flicker: {fileID: 1600240112}
   credits: {fileID: 1049649754}
   title: {fileID: 365042571}
-  thing: {fileID: 460124558}
   buttonHover: {fileID: 8300000, guid: f083e5b52296cef4eaefb150ec01e469, type: 3}
   buttonSelect: {fileID: 8300000, guid: a6020058665a043438c395412bfbddd8, type: 3}
 --- !u!1 &1415608134
@@ -1996,7 +1995,7 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 0.91
   m_Text: "Voice Lines:\n\nAdrian King\nErik Schofer\nTimothy Lundberg\n\nFonts:\n\nInconsalata\n\nMusic/Sounds:\n\nMade
-    By Nils Schofer\nusing BeatBox\n\nPictures:\n\nMabe By Nils Schofer\nusing Paint.net\n\nEverything
+    By Nils Schofer\nusing BeepBox\n\nPictures:\n\nMabe By Nils Schofer\nusing Paint.net\n\nEverything
     not listed here was made \nby Nils Schofer in the Unity Engine"
 --- !u!222 &2077292126
 CanvasRenderer:
