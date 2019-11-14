@@ -1,6 +1,6 @@
 # Design Document – Cubus
 
-![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Cubi%20-%20Model.PNG "Model for Red Cubi")
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Title.png "Cubus Title")
 
 ## The Game Overview:
 
@@ -94,7 +94,7 @@ Being the nature of *Cubus* being that it is not a RTS or Strategy game, having 
 
 #### Example UI sketch:
 
-![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Cubi%20-%20Model.PNG "Model for Red Cubi")
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/UI%20Ideas.png "Example setup for UI")
 
 ## Story/Theme:
 As mentioned multiple times before, the theme of *Cubus* is to be just a cartoony fun puzzle platformer that you might play to relax. No high stakes, nothing too complicated. Same goes for the story. The story of *Cubus* will be secondary to the gameplay and will be created and added in (through Cutscenes and objects in the world) once everything else has been implemented.
