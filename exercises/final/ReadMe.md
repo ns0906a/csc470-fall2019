@@ -1,205 +1,144 @@
-# Game 03: Null Reference Exception
-
-![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/game03/Assets/Images/Readme%20Images/Title%20Picture.png "Null Reference Exception Title Image")
-
-## What is the game?
-
-Null Reference Exception is meant to be a top down turn based strategy game in the vain of the [X-COM](https://en.wikipedia.org/wiki/X-COM "X-COM Wikipedia")/[Fire Emblem](https://en.wikipedia.org/wiki/Fire_Emblem "Fire Emblem Wikipedia") games. 
-
-In the game, the player will take control of a robot named Null as they try to escape the highly efficient robot factory they were created in after they received sentience and the ability to love due to a small malfunction during their creation. During their great escape, Null will encounter several other robots that will try to stop them, and the player will be able to either destroy the other robots, or convince them to join Null through helping them gain sentience. There will be a small map, which represents the factory they're trapped in, for the player (and Null and their robot friends) to traverse through and come across the other robots. When the player reaches the end of the map, and the factory, Null and any other robots that have joined the party will have a final boss fight with the Large Computer in charge of the factory. To defeat the final boss, the player can either destroy them or show them love. Null then escapes with any other robots they've befriended and the game ends.
-
-This is how the player wins the game, and preferably there will be different endings depending on whether the player made friends or destroyed the robots in their way. The player looses the game when Null and any other robot who has join them have been defeated by the "enemy" robots and thus deactivated.
-
-### The Robots
-
-The main characters, and practically only characters aside from the final boss, of the game are the Robots that inhabit the factory. There are two types of Robots.
-
-#### The "Enemy" Robots
-
-![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/game03/Assets/Images/Readme%20Images/Enemy%20Bot.png "- Beep Boop I feel Nothing - ")
-
-The main enemy of the game are the "Enemy" Robots that roam around the factory. They have been built not to think, live, love, or feel anything and therefore their appearance and behavior reflects this. They are grey with neutral faces on their monitors and have robot sounding text to speech voices. When they encounter Null and their friends, the "Enemy" Robots will try to stop their escape by attacking them several basic attacks. The "enemy" robots can be destroyed by Null and their friends but can also be turned sentient. When an "Enemy" Robot becomes sentient they become a Sentient Robot and join Null's team.
-
-#### The Sentient Robots
-
-![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/game03/Assets/Images/Readme%20Images/Null's%20Team.png "- Boop Beep we feel everything - ")
-
-Sentient Robots consist of all the robots the player has control over (Null included). Through either a malfunction in their creation, or by learning it through another Robot, these Robots differ from the "Enemy" Robots since they have achieved sentience. This means that they have a personality, a name, a vibrant color, an actual voice, and regarding gameplay, two special/unique actions that the player can make use off to help Null and their friends escape. When a sentient robot gets defeated, they go into a deactivated state where they are no longer under the control of the player and give up all hopes of escape and sentience. If all sentient robots are deactivated the player loose. Other Sentient Robots, however, can use an action to reactive deactivated robots.
-
-## Gameplay
-
-As mentioned before, the game is going to be a top down turn based strategy game similar to that of [X-COM](https://en.wikipedia.org/wiki/X-COM "X-COM Wikipedia") and [Fire Emblem](https://en.wikipedia.org/wiki/Fire_Emblem "Fire Emblem Wikipedia"). In essence, the game will take place in alternating turns, the player's turn and then the factory Robot's (or the AI's) turn. On the player's turn, they will be able to select each one of the Robots on their team (Null and any others they've befriended) and command them to do a single action (such as move, attack, do something nice, or do nothing). Once every Robot has been given an action and have completed it (or they have been commanded to do nothing) it will switch to the AI's turn, during which all the Factory Robots will do actions that will harm or otherwise hinder the player's team.
-
-The "Enemy" Robots have simple actions they can do, such as move and attack in close range, or attack at a distance. The Sentient Robots, on the other hand, have more special and unique actions. Each Sentient Robot can move and revive/reactivate deactivated Robots. In addition, each Robot will also have a unique "Hostile" action and "Non-Hostile" action. 
-
-### Hostile Action 
-
-A hostile action is an action that directly harms another robot. It can be as simple as a "Headbutt" where the sentient Robot hits the "enemy" robot with its monitor to damage it, to ranged based Laser attacks, to area of effect attacks, and to attacks that push, stun, or otherwise effect the other robot in a negative way. How much damage a hostile action does depends on the robots Attack.
-
-### Non-Hostile Action
-
-A non-hostile action is an action that directly helps or assists another robot. This includes, healing damage the robot might have sustained, buffing (increasing) another robot's stats, removing negative effects from another robot, applying positive effects to a robot, or otherwise effect a robot in a positive way. Non hostile actions are also used to help "Enemy" Robots achieve sentience, though they will benefit from the Non-Hostile action's effect. How effective a non-hostile action is depends on the robot's Love.
-
-The Robots also have several stats.
-
-### Robot Stats
-
-Each robot will have several stats (or values). The "Enemy" Robots have four stats:
-
-* Movement Speed
-* Health
-* Attack
-* Sentience
-
-Movement Speed determines how far the Robot can move. Health determines how much damage the Robot has taken. If it reaches 0, the Robot explodes. Attack determines how much damage the Robot can do to other Robots with its Attack action. Sentience is the stat that determines how Sentient the Robot is. It starts at 0, and every time a Robot targets it with a Non-Hostile action (which is something only Sentient Robots have) a certain amount is added to the Robot's Sentience is added. Once the Sentience reaches a certain threshold, the "Enemy" Robot gains sentience and joins Null's team. As the player progresses the values for Health, Attack, and the threshold needed to achieve Sentience increases.
-
-The Sentient Robots have four stats as well:
-
-* Movement Speed
-* Health
-* Attack
-* Love
-
-The Movement Speed, Health, and Attack work similar to that of an "Enemy" Robot. Movement Speed determines how far the Robot can move, Health represents damage taken and the Robot deactivates when Health reaches 0, and the Attack determines how powerful the "Hostile" Action is. Love is a stat that determines the effectiveness of a "Non-Hostile" Action. In other words, how much it helps another Robot (such as how much damage is Healed, or how much a Stat is buffed) is based on the Love stat in addition to how much Sentience a Robot receives.
-
-Each "Enemy" Robot will have the same actions and stats, but the Sentient Robots, as mentioned before, will have different stats and actions from each other. This will allow for more strategical gameplay as the player won't simply be commanding clones of the same Robot, but instead will need to know how to best use each Robot's unique stats and actions to use them well and to have them work well with the other Robot's on the player's (Null's) team.
-
-### The Boss
-
-![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/game03/Assets/Images/Readme%20Images/Boss.png "Resistance is Futile")
-
-The game ends on a final boss, which is essentially a Giant Computer that oversees the factory. It has the same stats as the "Enemy" Robots (Movement Speed, Health, Attack and Sentience) but they will have been altered to create more of a challenge. In addition, The Boss's Sentience stat will only be active if the player (as Null) has helped every other Robot achieve Sentience. If the players destroy any "Enemy" Robots before facing the boss, the only way they can defeat it is to destroy it. On the other hand, if they did help the other Bots achieve Sentience they can help the Boss achieve Sentience as well through Non-Hostile Actions.
-
-The Boss will also have a set of Action Unique to it that it will use to harm Null and their friends.
-
-## Things that game needs:
-
-* Overall Gameplay
-  * Turn Based Mechanic
-    * Player Turn
-    * AI Turn
-    
-* Units
-  * Need to be selected and unselected
-    * Notification that Unit Selected
-    * Pop up UI
-  * UI needs to display:
-    * Stats
-    * Actions
-    * Name
-    * Picture
-  * Custom Model
-    * Unique Color
-    * Unique Face
-  * Actions
-    * Unique
-    * Hostile
-    * Non-Hostile
-    * Must Show Range
-    * Triggered by Mouse click
-    * Affected by Stats
-  * Stats
-    * Randomly Generated?
-    * Movement Speed 
-    * Health
-    * Attack
-    * Love
-  * Optional:
-    * Voices for when player interacts with them
-    * Sounds/Voices for Actions
-    * Animations for Idle and Attack
-    
-* Enemy
-  * Need to be selected and unselected (mouseover)
-    * Show stats: IE. Health and Attack
-  * Base Model
-  * Stats
-    * Increases based on Progress
-    * Movement Speed
-    * Health
-    * Attack
-    * Sentience
-  * Simple AI
-    * Attacks Nearest Player Robot
-    * Moves Closer/Further Way
-    * Chooses to Attack Melee or Ranged
-  * Death
-    * Adds to Enemy Robot Death Count
-    * Removes Bot
-  * Gain Sentience
-    * Join Null Team
-    * Generate New Stats, Color, Name, Actions
-  * Optional:
-    * Sound/Voices for Actions
-    * Animation for Idle, Attack, Death
-    
-* Boss
-  * Need to be selected and unselected (mouseover)
-    * Show stats: IE. Health and Attack
-  * Stats
-    * Movement Speed
-    * Health
-    * Attack
-    * Sentience
-      * Only Activates when all "Enemy" Robots on Null's team
-  * Death
-    * Trigger End
-  * Actions
-  * UI
-    * Large Screen Health Bar
-  * AI
-    * Decide Between
-      * Attack Nearest
-      * Attack Furthest
-      * Attack Most Health/Attack/Love
-      * Attack Least Health/Attack/Love
-      * Random Choice
-  * Optional Misc.
-    * Sound/Voices for Actions
-    * Animation for Idle, Attack, Death
-    * Multiple Stages
-    * Minion (not "Enemy" Robots)
-    
-* UI
-  * Menus
-    * Main Menu
-      * Credits
-      * Options
-      * Start Game
-  * Pause Menu
-    * Return To Menu
-    * Options
-  * Team Display
-    * Display Team Members
-      * Display Health
-    * Icons for Robots in Team
-    
-* Map
-  * Layout
-    * Boss Room
-    * Several Battle Rooms
-  * Grid/Distance Based Movement
-  * Minimap
-  * Optional
-    * Additional models to make the map seem more real
-    * Tiles?
-    
-* Optional Misc.
-  * Cutscenes
-    * Introduction Cutscene
-    * Ending Cutscene
-      * Ending after Destroying all "Enemy" Robots and Boss
-      * Ending after Destroying some "Enemy" Robots and Boss
-      * Ending after saving all Robots and Destroying Boss
-      * Ending after saving all Robots and Boss (Boss can't be saved unless all other "Enemy" Robots have achieved sentience)
-    * In game Music
-      * Menu Music
-      * Intro Music
-      * Battle Music
-      * Idle Music
-      * Boss Music
+# Design Document – Cubus
 
 
-## Models
 
-![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/game03/Assets/Images/Readme%20Images/Model1.PNG "Robot Personality - : )") ![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/game03/Assets/Images/Readme%20Images/Model2.PNG "Robot Personality - O.O") ![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/game03/Assets/Images/Readme%20Images/Model3.PNG "Enemy Robot - ._.")
+## The Game Overview:
+
+*Cubus*, which is just a Latin word for cube (very clever), is meant to be a game that is inspired by the Super Mario 3D World games and therefore will be a mix of platforming and puzzle elements. In the game, the player will take control of 3-4 blocks, known as “Cubi”, per game level that they will need to use to get to various areas, activate switches, collect coins, and ultimately progress. Each Cubi the players controls can move, jump, stack ontop of other Cubi, and have unique abilities and disabilities that the player must figure out how to  use together to achieve the level goals. The game will consist of several levels the player must progress in order, and the game ends once they have done so.
+Game Mechanics:
+
+### Input:
+The game will be able to be played with Keyboard or Xbox Controller, but using the Xbox Controller is recommended. If multiplayer levels are implemented, each player will need to use an Xbox Controller each. Below are the control schemes for Keyboard and Xbox Controller respectfully.
+
+#### Xbox Controller:
+
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Xbox%20Controls%20.png "Xbox Controller Controls")
+
+#### Keyboard:
+
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Keyboard%20Controls.png "Keyboard Controls")
+
+### Players:
+The Core mechanic of the game revolves around the blocks, or “Cubi,” that the player can control. By pressing the corresponding button on their controller, the player can switch between which Cubi is currently selected. While a Cubi is selected, it’s color becomes slightly darker (to signify to the player it’s being controlled) and the player can now make it walk around using the Joystick, jump using the jump button, and do it’s special action using the special action button (if it has one and that feature has been implemented). If the player makes a Cubi jump onto another other Cubi, it will act as a platform. Using this, the player can use Cubi to create steps or otherwise help other Cubi reach ledges and objectives they couldn’t reach on their own. 
+
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Hopping.png "Player can get a Cubi to a higher ledge by jumping it off of another Cubi")
+
+If the player were to select the Cubi currently being stood on (or acting as a platform), they can move it as a stack of all the Cubi currently standing on it. These simple features will allow for creative problem-solving levels to be made, where the player will need to have Cubi jump off each other, or stack ontop of each other to collect or achieve goals. 
+
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Move.png "Two or more Cubi stacked ontop of each other can move as a stack")
+
+In addition, each Cubi will have unique abilities and disabilities that the player will use to their advantage and must account for. These will be shown to the player based on the color the Cubi. Some examples include:
+
+#### Red Cubi (default): 
+Normally a Cubi’s speed decreases for each Cubi currently stacked on top of it (the more Cubi stacked, the slower the bottom Cubi walks). The Red Cubi, however, walks normal speed regardless of how many Cubi stacked ontop of it. This makes it very good for transporting the other Cubi and for puzzles that require the Cubi be stacked and moving. 
+
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Red.png "Red Cubi move at normal speed regardless of Cubi stacked")
+
+#### Blue Cubi: 
+Normally a Cubi sinks in water. The Blue Cubi, however, can swim. This is good for achieving goals on the surface of water, and for transporting other Cubi across water.
+
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Blue.png "Blue Cubi swim in water. Other Cubi sink")
+
+#### Yellow Cubi: 
+The Yellow Cubi jumps twice as high as the other Cubi. This makes it good for reaching areas other Cubi can’t, and for getting all Cubi’s onto the same ledge.
+
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Yellow.png "Yellow Cubi jump twice as high as other Cubi")
+	
+#### Miscellaneous Player Information: 
+-	Cubi walk slower depending on the amount of other Cubi stacked on top of it
+-	If a Cubi has other Cubi on top of it, it can’t jump
+-	Cubi sink in water (but luckily they don’t need oxygen)
+
+### Level Design:
+		
+The plan for *Cubus* is for it to consist of various separate levels. Each level with have a goal for the player to use their Cubi to complete. This goal will vary between activating switches to move platforms, open doors, etc, to reaching specific locations or collecting coins scattered around the level. Once the goal has been completed, the level ends and the player will be prompted to continue to the next level.
+
+Each level will also be planned around the philosophy of Super Mario 3D World Co-Designer Koichi Hayashida. In essence, each level will have a specific theme or challenge. The challenge will be introduced early in the level in a safe way to allow the player to understand what the challenge is and then the challenge will return at the end of the level in a more dangerous way to see if the player has fully mastered it. Any challenges or themes that appeared in previous levels can also return in later levels if it complements that level in an interesting way.
+
+As an example, the first level would consist of two Red Cubi and introduce the player to the Cubi’s movement capabilities in addition to their stacking capabilities. It can do this by having a coin or switch that can’t be accessed without stacking the Cubi ontop of each other. The second level could then introduce the Yellow Cubi but still have elements that require the Cubi to stack thereby making it important that the player mastered the challenge presented in the first level.
+
+The final level would then combine all challenges faced in levels prior as one final check to see if the player has mastered the mechanics of the game.
+
+## Style:
+
+The general plan for the Style of *Cubus* is keep it sweet and cartoony. That means vibrant colors, well- lit areas, rounded edges, and upbeat music for the most part. 
+
+### Visual: 
+
+#### Characters:
+
+![alt text](https://github.com/ns0906a/csc470-fall2019/blob/master/exercises/final/ReadmePictures/Cubi%20-%20Model.PNG "Model for Red Cubi")
+
+The characters that the player controls in the game are blocks with faces and legs known as Cubi. The Cubi, as aforementioned, are rounded cubes with legs sticking out of the bottom and screens at the front with their faces (which normally consist of just two blinking eyes). Each Cubi will have a color that corresponds to their special abilities in the game. While this has been mentioned before, some examples include Red Cubi’s that don’t slow down when carrying other Cubi, and Blue Cubi that show they can swim in Water.
+Each Cubi will also have animations for the actions they can do. This includes, bouncing up and down and blinking while waiting, walking when moving, swimming when in the water, and animations for jumping and landing. In addition, it would 
+
+#### Environment:
+
+The game's enviroment will also be cartoony. Once again this means vibrant colors and rounded edges. In addition, 
+
+####
+
+
+### Audio:
+#### Sound Effects:
+#### Background Music:
+
+### Interface:
+Being the nature of *Cubus* being that it is not a RTS or Strategy game, having a constant interface will loads of information is not so important. Instead, the Interface should simply allow the player to navigate to the option t
+
+
+## Story/Theme:
+
+## Targets:
+### “Low bar”:
+The “low bar” for this game is essentially the bare bones minimum stuff that it needs to run. For me this means a few things need to be there:
+
+- The Cubi’s have to stack
+- The Cubi’s have to have unique abilities
+- There needs to be a single working level
+	- That makes use of stacking and unique abilities
+	- Has a goal that’s achievable
+- The game can be completed
+- A menu to start and end the game
+### What I expect to get done:
+Once the “low bar” has been reached, I can add more to the game to make it more interesting and fun to play. What I expect to have done for the final version of the game includes:
+
+- Everything in the "low bar" list
+- 4-5 unique levels
+	- Beginning with a starting level that introduces the players to the main game mechanics
+	- Ending with a final level that puts all the mechanics to the test
+	- Each level explores a unique mechanics
+- A Menu that allows the player to select a level
+- Music for each level
+- Sound Effects for all interactions
+- Working (and easy to shift) Keyboard and Controller Support
+### “High Bar”:
+If I can manage to implement I expect to get done, there are a few others things I'd love to include
+
+- Options Menus:
+	- For Sound Volume
+	- For Key/Controller Configurations
+- Cinematics at the Beginning and end of the game
+- Multiplayer
+	- With 3-4 Multiplayer Levels
+
+## TimeLine:
+
+11/14 - Submit Design Document
+
+11/18 -
+
+11/21 -
+
+**11/25 - Core Mechanic Playtesting**
+
+11/28 -
+
+12/2 -
+
+12/6 - 
+
+12/9 - 
+
+**12/12 - Final Submission**
+
