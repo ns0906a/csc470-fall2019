@@ -9,6 +9,10 @@ TagManager:
   - block
   - no-jump
   - coin
+  - end
+  - player2
+  - player3
+  - arrow
   layers:
   - Default
   - TransparentFX
