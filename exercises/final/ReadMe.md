@@ -154,3 +154,11 @@ If I can manage to implement what I expect to get done, there are a few others t
 12/9 - Have game finished (dedicate rest of time to bug fixes and additional content)
 
 **12/12 - Final Submission**
+
+### Cheats
+Incase lag causes the game not to run.
+
+- Press O to open the End Game Door
+- Press P to End Level
+- Press ] to increase Jump height
+- Press [ to decrease junp height
