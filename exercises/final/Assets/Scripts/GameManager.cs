@@ -81,6 +81,32 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.P) && !endgame)
+        {
+            endLevel();
+        }
+
+        if (Input.GetKeyDown(KeyCode.O) && !endgame)
+        {
+            openDoor();
+        }
+
+        if (Input.GetKeyDown(KeyCode.RightBracket))
+        {
+            foreach (PlayerScript play in players)
+            {
+                play.jumpForce += .2f;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftBracket))
+        {
+            foreach (PlayerScript play in players)
+            {
+                play.jumpForce -= .2f;
+            }
+        }
+
         if (Input.GetAxis("Fire4") == 1)                                                            // Show Arrows over Coins (to help find more Hidden ones)
         {
             foreach (GameObject arrw in GameObject.FindGameObjectsWithTag("arrow")) // Destroy Previous Arrows
@@ -241,6 +267,14 @@ public class GameManager : MonoBehaviour
     public void addEnd(PlayerScript player)              // Add character to endList and check if Level over
     {
         endPlayers.Add(player);
+        if (player.holding != null)
+        {
+            endPlayers.Add(player.holding);
+            if (player.holding.holding != null)
+            {
+                endPlayers.Add(player.holding.holding);
+            }
+        }
         if(endPlayers.Count == players.Length)
         {
             endLevel();
@@ -251,6 +285,14 @@ public class GameManager : MonoBehaviour
     public void removeEnd(PlayerScript player)          // Remove character from endList
     {
         endPlayers.Remove(player);
+        if (player.holding != null)
+        {
+            endPlayers.Remove(player.holding);
+            if (player.holding.holding != null)
+            {
+                endPlayers.Remove(player.holding.holding);
+            }
+        }
         Debug.Log(endPlayers.Count + "," + players.Length);
     }
 

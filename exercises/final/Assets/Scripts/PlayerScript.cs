@@ -13,7 +13,7 @@ public class PlayerScript : MonoBehaviour
     public float moveSpeed = 5f;            // Movement speed of Character
     float setSpeed = 5f;                    // Default speed of Character
     float rotateSpeed = 60f;                // Rotate speed of Character
-    float jumpForce = 0.38f;                // Force at which CHaracter Jumps
+    public float jumpForce = 0.45f;                // Force at which CHaracter Jumps
 
     public bool inWater = false;            // Bool for when Character in Water
 
@@ -309,11 +309,24 @@ public class PlayerScript : MonoBehaviour
     {
         if (holding != null && bottom != null && holding == bottom)
         {
-            holding.holding = null;
-            if (!inJumpZone)
+            if (holding.holding != null)
             {
-                holding.canJump = true;
+                holding.holding.holding = null;
+                if (!inJumpZone)
+                {
+                    holding.holding.canJump = true;
+                }
             }
+            else
+            {
+                holding.holding = null;
+
+                if (!inJumpZone)
+                {
+                    holding.canJump = true;
+                }
+            }
+
             bottom = null;
         }
 

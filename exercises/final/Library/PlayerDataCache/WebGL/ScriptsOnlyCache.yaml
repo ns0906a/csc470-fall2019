@@ -9,10 +9,8 @@ ScriptsOnlyBuild:
     UnityEditor.Graphs.dll:
     - UnityEditor.Graphs.AnimationBlendTree.Graph
     - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.AnyStateNode
     - UnityEditor.Graphs.AnimationStateMachine.Graph
     - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
-    - UnityEditor.Graphs.AnimationStateMachine.StateNode
     - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
@@ -74,21 +72,21 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10236}
     - Class: 114
-      Script: {instanceID: 10406}
+      Script: {instanceID: 10408}
     - Class: 114
-      Script: {instanceID: 10584}
+      Script: {instanceID: 10586}
     - Class: 114
-      Script: {instanceID: 10670}
+      Script: {instanceID: 10672}
     - Class: 114
-      Script: {instanceID: 10730}
+      Script: {instanceID: 10732}
     - Class: 114
-      Script: {instanceID: 10796}
+      Script: {instanceID: 10798}
     - Class: 114
-      Script: {instanceID: 11044}
+      Script: {instanceID: 11046}
     - Class: 114
-      Script: {instanceID: 11362}
+      Script: {instanceID: 11364}
     - Class: 114
-      Script: {instanceID: 11394}
+      Script: {instanceID: 11396}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -137,11 +135,11 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10236}
     - Class: 114
-      Script: {instanceID: 10924}
+      Script: {instanceID: 10926}
     - Class: 114
-      Script: {instanceID: 11044}
+      Script: {instanceID: 11046}
     - Class: 114
-      Script: {instanceID: 11394}
+      Script: {instanceID: 11396}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -212,21 +210,21 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10296}
     - Class: 114
-      Script: {instanceID: 10584}
+      Script: {instanceID: 10380}
     - Class: 114
-      Script: {instanceID: 10670}
+      Script: {instanceID: 10586}
     - Class: 114
-      Script: {instanceID: 10796}
+      Script: {instanceID: 10672}
     - Class: 114
-      Script: {instanceID: 10924}
+      Script: {instanceID: 10798}
     - Class: 114
-      Script: {instanceID: 11044}
+      Script: {instanceID: 10926}
     - Class: 114
-      Script: {instanceID: 11362}
+      Script: {instanceID: 11046}
     - Class: 114
-      Script: {instanceID: 11394}
+      Script: {instanceID: 11364}
     - Class: 114
-      Script: {instanceID: 202290}
+      Script: {instanceID: 11396}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -305,21 +303,21 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10296}
     - Class: 114
-      Script: {instanceID: 10584}
+      Script: {instanceID: 10380}
     - Class: 114
-      Script: {instanceID: 10670}
+      Script: {instanceID: 10586}
     - Class: 114
-      Script: {instanceID: 10796}
+      Script: {instanceID: 10672}
     - Class: 114
-      Script: {instanceID: 10924}
+      Script: {instanceID: 10798}
     - Class: 114
-      Script: {instanceID: 11044}
+      Script: {instanceID: 10926}
     - Class: 114
-      Script: {instanceID: 11362}
+      Script: {instanceID: 11046}
     - Class: 114
-      Script: {instanceID: 11394}
+      Script: {instanceID: 11364}
     - Class: 114
-      Script: {instanceID: 202290}
+      Script: {instanceID: 11396}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -398,21 +396,21 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 10296}
     - Class: 114
-      Script: {instanceID: 10584}
+      Script: {instanceID: 10380}
     - Class: 114
-      Script: {instanceID: 10670}
+      Script: {instanceID: 10586}
     - Class: 114
-      Script: {instanceID: 10796}
+      Script: {instanceID: 10672}
     - Class: 114
-      Script: {instanceID: 10924}
+      Script: {instanceID: 10798}
     - Class: 114
-      Script: {instanceID: 11044}
+      Script: {instanceID: 10926}
     - Class: 114
-      Script: {instanceID: 11362}
+      Script: {instanceID: 11046}
     - Class: 114
-      Script: {instanceID: 11394}
+      Script: {instanceID: 11364}
     - Class: 114
-      Script: {instanceID: 202290}
+      Script: {instanceID: 11396}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -630,10 +628,16 @@ ScriptsOnlyBuild:
     className: Selectable
   - hash:
       serializedVersion: 2
-      Hash: 2e1bc27b9c7b3887c8073ee3fdee746a
+      Hash: 3e48c6bcbd5bc43a299b8c6232bfe07d
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: PlayerScript
+  - hash:
+      serializedVersion: 2
+      Hash: 02acfc331aa007b32368a8dadeb3f538
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: WaterCheck
   - hash:
       serializedVersion: 2
       Hash: b3ab2106268377ffe25dd18ac23dca28
@@ -874,12 +878,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
-  - hash:
-      serializedVersion: 2
-      Hash: 02acfc331aa007b32368a8dadeb3f538
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: WaterCheck
   platform: 20
   scenePathNames:
   - Assets/Scenes/Splash Screen.unity
