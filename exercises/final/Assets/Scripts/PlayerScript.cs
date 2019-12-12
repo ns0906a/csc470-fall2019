@@ -5,54 +5,57 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour
 {
 
-    GameObject camTarg;
+    AudioSource aud;                        // Audiosource
+    public AudioClip jump;                  // Sound for jumping
 
-    public float moveSpeed = 5f;
-    float setSpeed = 5f;
-    float rotateSpeed = 60f;
-    float jumpForce = 0.38f;
+    GameObject camTarg;                     // Camera Target (used to determine movement)
 
-    bool inWater = false;
+    public float moveSpeed = 5f;            // Movement speed of Character
+    float setSpeed = 5f;                    // Default speed of Character
+    float rotateSpeed = 60f;                // Rotate speed of Character
+    float jumpForce = 0.38f;                // Force at which CHaracter Jumps
 
-    public bool selected;
-    public bool selected2;
+    public bool inWater = false;            // Bool for when Character in Water
 
-    public bool canJump;
-    bool inJumpZone = false;
+    public bool selected;                   // Bool for when Selected
 
-    public bool hooked;
+    public bool canJump;                    // Bool for whether Character can Jump
+    bool inJumpZone = false;                // Bool for whether Character is in a Zone where they cannot Jump
 
-    public GameObject hat;
+    public bool hooked;                     // Bool for when Character is Riding another Character
 
-    public PlayerScript bottom;
-    public PlayerScript holding;
+    public GameObject hat;                  // Trigger that checks if Character is ontop of Character
 
-    public Color playerColor;
+    public PlayerScript bottom;             // Character the Character is Standing on
+    public PlayerScript holding;            // Character the CHaracter is Holding
 
-    public int type;
+    public Color playerColor;                      // Character's Color (Red - Type 0, Blue - Type 1, Yellow - Type 2)
 
-    public float gravMod = 0.15f;
+    public int type;                        // Character's Type (Type 0 - Red, Type 1 - Blue, Type 2 - Yellow)
 
-    public float yVel;
+    public float gravMod = 0.15f;           // The Multiplier for Gravities effect on the Character
 
-    bool prevGrounded;
+    public float yVel;                      // Value of Character's 'Falling' movement
 
-    float hAxis;
-    float vAxis;
-    float tAxis;
+    bool prevGrounded;                      // Checks if previously Grounded
 
-    Vector3 destination;
+    float hAxis;                            // Horizontal Movement Axis 
+    float vAxis;                            // Vertical Movement Axis 
+    float tAxis;                            // Horizontal + Vertical Movement Axis 
 
-    CharacterController cc;
-    Animator ani;
-    public Renderer re;
+    Vector3 destination;                    // Where the character looks before moving 
+
+    public CharacterController cc;          // Character's Character Controller
+    Animator ani;                           // Character's Animator
+    public Renderer re;                     // Character's Renderer
     GameManager gm;
 
     // Start is called before the first frame update
     void Start()
     {
+        aud = GetComponent<AudioSource>();
         inJumpZone = false;
-        camTarg = Camera.main.gameObject;//GameObject.Find("CameraTarget");
+        camTarg = Camera.main.gameObject;
         gm = GameObject.Find("GameManager").GetComponent<GameManager>();
         if (type == 1)
         {
@@ -80,25 +83,22 @@ public class PlayerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (selected)
-        //{
-            //Debug.Log(name + ": " + canJump);
-        //}
-        
         if (selected && !gm.paused)
         {
-            hAxis = Input.GetAxis("Horizontal");
-            vAxis = Input.GetAxis("Vertical");
-            
-        } else
+            hAxis = Input.GetAxis("Horizontal");                        // Sets hAxis to Horizontal Axis
+            vAxis = Input.GetAxis("Vertical");                          // Sets vAxis to Horizontal Axis
+
+        }
+        else                                                            // Sets hAxis and vAxis to 0 when not Selected
         {
             hAxis = 0;
             vAxis = 0;
 
         }
-        tAxis = Mathf.Abs(hAxis) + Mathf.Abs(vAxis);
 
-        if (cc.isGrounded || (type == 1 && inWater))
+        tAxis = Mathf.Abs(hAxis) + Mathf.Abs(vAxis);                   // Sets tAxis to vAxis + hAxis for Animation Speed
+
+        if (cc.isGrounded || (type == 1 && inWater))                   // Determine if Character can fall/Jump
         {
             if (yVel < -0.10)
             {
@@ -108,6 +108,7 @@ public class PlayerScript : MonoBehaviour
             if (Input.GetAxis("Jump") == 1 && selected && canJump && !gm.paused)
             {
                 yVel = jumpForce;
+                aud.PlayOneShot(jump);
             }
             
 
@@ -116,16 +117,7 @@ public class PlayerScript : MonoBehaviour
             if (!hooked || selected)
             {
                 yVel += Physics.gravity.y * gravMod * Time.deltaTime;
-            }else if (hooked)
-            {
-                //if (bottom != null)
-                //{
-                    //Vector3 fall = transform.position; 
-                    //fall.y = bottom.transform.position.y + 1.5f;
-                //}
-            }
-
-            
+            }            
 
             if (yVel < -gravMod && inWater)
             {
@@ -143,9 +135,8 @@ public class PlayerScript : MonoBehaviour
             tAxis = 1;
         }
 
-        if (selected && !gm.paused)
+        if (selected && !gm.paused)                   // Turn to look at Walking Direction
         {
-            //Vector3 destination = new Vector3(transform.position.x + (hAxis), transform.position.y, transform.position.z + (vAxis));
             Vector3 destination = transform.position + (camTarg.transform.right * (hAxis)) + (camTarg.transform.forward * (vAxis));
             destination.y = transform.position.y;
             Vector3 vecToDist = (destination - transform.position).normalized;
@@ -153,30 +144,31 @@ public class PlayerScript : MonoBehaviour
             transform.rotation = Quaternion.LookRotation(newDir);
         }
 
-        Vector3 amountToMove = transform.forward * tAxis * moveSpeed * Time.deltaTime;   
-        amountToMove.y = yVel;
-        
-        if ((!hooked || selected) && !gm.paused)
+        Vector3 amountToMove = transform.forward * tAxis * moveSpeed * Time.deltaTime;        // Move when tAxis > 0
+        amountToMove.y = yVel;                                                                // Fall yVel
+
+        if ((!hooked || selected) && !gm.paused)                                              // Do full Movement
         {
             cc.Move(amountToMove);
         }
-        
 
-
-
-        if (tAxis > 0 && (ani.GetCurrentAnimatorStateInfo(0).IsName("Walk") || ani.GetCurrentAnimatorStateInfo(0).IsName("Swim")))
+        if (tAxis > 0 && (ani.GetCurrentAnimatorStateInfo(0).IsName("Walk") || ani.GetCurrentAnimatorStateInfo(0).IsName("Swim")))       // Run animation Speed based on tAxis
         {
             ani.speed = tAxis;
         } else
         {
             ani.speed = 1;
         }
-        if (selected)
+
+        if (selected)                   // Set Character Collider size and Character Speed Based on Amount of Characters stacked
         {
+            cc.enabled = true; 
             setSize(findSize(0));
         } else
         {
             setSize(0);
+            cc.enabled = false;
+           
         }
         
         ani.SetFloat("speed", tAxis);
@@ -185,29 +177,14 @@ public class PlayerScript : MonoBehaviour
         ani.SetBool("swim", inWater);
 
         prevGrounded = cc.isGrounded;
-
-        if (selected)
-        {
-            //Debug.Log(name + ": " + yVel + ", " + prevGrounded + ", " + cc.isGrounded);
-        }
-
         
-    }
-
-    void OnControllerColliderHit(ControllerColliderHit hit)
-    {
-        if (hit.gameObject.CompareTag("block"))
-        {
-            Vector3 move = transform.forward * Time.deltaTime;
-            move.y = hit.gameObject.transform.position.y;
-            hit.gameObject.GetComponent<CharacterController>().Move(move);
-        }
     }
 
     void OnTriggerEnter (Collider other)
     {
-        if (other.CompareTag("hat") && other.gameObject != hat)
+        if (other.CompareTag("hat") && other.gameObject != hat)                                 // Sets Character stacked on another Character
         {
+            
             PlayerScript sat = other.GetComponentInParent<PlayerScript>();
             if (bottom == null && sat != bottom && sat.holding == null && sat.holding != this)
             {
@@ -220,15 +197,17 @@ public class PlayerScript : MonoBehaviour
                 }
                 bottom = sat;
             }
+            Debug.Log(name + ": Hat Enter");
         }
 
-        if (other.CompareTag("end"))
+        if (other.CompareTag("end"))                                                        // Checks if Character in End Area
         {
             gm.addEnd(this);
         }
 
-        if (other.CompareTag("water"))
+        if (other.CompareTag("water"))                                                      // Checks if Character in Water
         {
+            Debug.Log(name + ": Water");
             yVel = 0;
             inWater = true;
             if (type != 1)
@@ -238,10 +217,11 @@ public class PlayerScript : MonoBehaviour
             else
             {
                 gravMod = 0f;
+                moveSpeed = 5f;
             }
         }
 
-        if (other.CompareTag("no-jump"))
+        if (other.CompareTag("no-jump"))                                                      // Checks if Character in No-Jump Area
         {
             canJump = false;
             //inJumpZone = true;
@@ -252,14 +232,14 @@ public class PlayerScript : MonoBehaviour
             Destroy(other.gameObject);
         }
 
-        if (other.CompareTag("player2") && selected)
+        if (other.CompareTag("player2") && selected)                                          // Checks if Character in Player1 Area (To Activate Player1)
         {
             gm.startFocusCam(GameObject.Find("Player 2"));
             gm.activatePlayer(GameObject.Find("Player 2").GetComponent<PlayerScript>());
             Destroy(other.gameObject);
         }
 
-        if (other.CompareTag("player3") && selected)
+        if (other.CompareTag("player3") && selected)                                          // Checks if Character in Player2 Area (To Activate Player2)
         {
             gm.startFocusCam(GameObject.Find("Player 3"));
             gm.activatePlayer(GameObject.Find("Player 3").GetComponent<PlayerScript>());
@@ -271,12 +251,12 @@ public class PlayerScript : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("hat") && other.gameObject != hat)
+        if (other.CompareTag("hat") && other.gameObject != hat && selected)                    // Sets Character no longer stacked on another Character
         {
             PlayerScript sat = other.GetComponentInParent<PlayerScript>();
             if (sat == bottom)
             {
-                Debug.Log(name + ": Exit-Check");
+                
                 if (!inJumpZone)
                 {
                     bottom.canJump = true;
@@ -293,18 +273,18 @@ public class PlayerScript : MonoBehaviour
             }            
         }
 
-        if (other.CompareTag("end"))
+        if (other.CompareTag("end"))                                                        // Checks if Character no longer in End Area
         {
             gm.removeEnd(this);
         }
 
-        if (other.CompareTag("water"))
+        if (other.CompareTag("water"))                                                      // Checks if Character no longer in Water
         {
             inWater = false;
             gravMod = 0.15f;
         }
 
-        if (other.CompareTag("no-jump"))
+        if (other.CompareTag("no-jump"))                                                    // Checks if Character no longer in No-Jump Zone
         {
             if (holding == null)
             {
@@ -314,19 +294,29 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    void setSize(int num)
+    void setSize(int num)                                     // Sets the size of Character's Character Controller and Character Speed
     {
         cc.height = 1.38f + (1.50f * num);
         cc.center = new Vector3(0f, -0.2f, 0f) + (new Vector3(0f, 0.7f,0f) * num);
-        if (type != 0)
+        if ((type == 1 && !inWater) || (type == 2))
         {
             moveSpeed = setSpeed * (1f / (num + 1f));
         }
         
     }
 
-    public int findSize(int num)
+    public int findSize(int num)                              // Code used to Determine Character Controller Size
     {
+        if (holding != null && bottom != null && holding == bottom)
+        {
+            holding.holding = null;
+            if (!inJumpZone)
+            {
+                holding.canJump = true;
+            }
+            bottom = null;
+        }
+
         if (holding == this)
         {
             //Debug.Log("Here!");
@@ -336,6 +326,10 @@ public class PlayerScript : MonoBehaviour
         else if (holding != null)
         {
             //Debug.Log(num + ": " + holding.name);
+            if(num > 3)
+            {
+                return 3;
+            }
             return holding.findSize(num + 1);
         }
         else
